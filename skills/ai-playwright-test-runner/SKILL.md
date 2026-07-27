@@ -1,11 +1,11 @@
 ---
 name: ai-playwright-test-runner
-description: "Skill chuyên biệt chạy test Playwright, tự động sửa lỗi (Self-Healing), TẠO REPORT CHI TIẾT SAU MỖI ROUND TEST và TỰ ĐỘNG CẬP NHẬT TRẠNG THÁI TEST CASE (kể cả khi 100% PASS không có bug). Thực thi *.spec.ts ở REAL Mode, tự đọc trace/stacktrace khi fail, phân loại lỗi script vs lỗi bug sản phẩm, xuất QC_REPORT_R<N>.md và chứng nhận testcase.md."
+description: "Skill chuyên biệt chạy test Playwright, tự động sửa lỗi (Self-Healing), TẠO REPORT CHI TIẾT SAU MỖI ROUND TEST, TỰ ĐỘNG CẬP NHẬT TESTCASE, và HỖ TRỢ VÒNG ĐỜI ĐÓNG VẾT BUG GIỮA AI DEV VÀ AI QC (Dev fix -> Đổi status BUG -> QC Recheck tự động -> Close Bug). Thực thi *.spec.ts ở REAL Mode, tự đọc trace/stacktrace khi fail, phân loại lỗi script vs lỗi bug sản phẩm, xuất QC_REPORT_R<N>.md và chứng nhận testcase.md."
 ---
 
-# 🚀 AI Playwright Test Runner — Self-Healing Execution & Test Case Auto-Update Engine (v2.1)
+# 🚀 AI Playwright Test Runner — Self-Healing & Closed-Loop Dev-QC Bug Lifecycle Engine (v2.2)
 
-Skill này thực thi Playwright test, tự sửa lỗi script, **TẠO REPORT CHI TIẾT SAU MỖI ROUND TEST**, **TỰ ĐỘNG CẬP NHẬT FILE TESTCASE (đánh dấu PASS/FAIL và cấp Chứng nhận QC khi 0 bug)** và báo cáo bug sản phẩm thực sự. Multi-Agent Safe — mỗi session lưu kết quả riêng biệt.
+Skill này thực thi Playwright test, tự sửa lỗi script, **TẠO REPORT CHI TIẾT SAU MỖI ROUND TEST**, **TỰ ĐỘNG CẬP NHẬT FILE TESTCASE (đánh dấu PASS/FAIL và cấp Chứng nhận QC khi 0 bug)**, và **CUNG CẤP CƠ CHẾ ĐÓNG VẾT BUG HAI CHIỀU GIỮA AI DEV VÀ AI QC (Dev fix -> QC Recheck tự động -> Close Bug)**. Multi-Agent Safe — mỗi session lưu kết quả riêng biệt.
 
 ---
 
@@ -23,192 +23,151 @@ Skill này thực thi Playwright test, tự sửa lỗi script, **TẠO REPORT C
 ```
 🚀 [TEST RUNNER CONFIRMATION]
 
-1. File test cần chạy:
-   → A) Lấy từ session hiện tại: <SESSION_ID>/03_playwright/*.spec.ts
-   → B) Chỉ định file cụ thể: ___
+1. Bạn muốn chạy chế độ nào?
+   → A) Chạy Full Test Suite (Mới từ đầu hoặc tiếp nối)
+   → B) Chế độ RECHECK BUGS (Quét các BUG-*.md đã được AI Dev đánh dấu RESOLVED_BY_DEV để kiểm tra lại)
 
 2. Môi trường chạy test:
    → A) Local: http://localhost:<port>
    → B) Staging: https://staging.yourapp.com
-   → C) Khác: ___
 
 3. Browser:
    → A) chromium (mặc định)
-   → B) firefox
-   → C) webkit (Safari)
-
-4. Chế độ:
-   → A) Headless (không hiện browser — nhanh hơn)
-   → B) Headed (hiện browser — dễ debug)
+   → B) firefox / webkit
 ```
 
 ---
 
-## ⚡ QUY TRÌNH THỰC THI, SELF-HEALING & CẬP NHẬT TESTCASE (5 BƯỚC)
+## 🔄 LUỒNG TƯƠNG TÁC ĐÓNG VẾT BUG GIỮA AI DEV & AI QC (CLOSED-LOOP LIFECYCLE)
 
 ```mermaid
 graph TD
-    A["🚀 1. Chạy Playwright Suite (Round N)"] --> B["📊 2. Phân tích Stacktrace, Screenshots & Traces"]
-    B --> C["📝 3. TỰ ĐỘNG SINH QC_REPORT_R<N>.md sau Round N"]
-    C --> D{"Kiểm tra kết quả Round N"}
-    D -->|"Lỗi Script (Selector/Timeout)"| E["🛠️ Self-Healing Code Fix"]
-    E -->|"Tăng Round N+1"| A
-    D -->|"Phát hiện Bug Sản Phẩm"| F["🐛 Sinh BUG-*.md Report"]
-    D -->|"100% PASS (0 Bug)"| G["🏆 4. TỰ ĐỘNG CẬP NHẬT 02_testcase.md (Cấp Chứng nhận PASS)"]
-    F --> G
-    G --> H["✅ 5. Cập nhật SESSION_CONTEXT.json & Complete Session"]
+    A["🔴 AI QC phát hiện lỗi sản phẩm<br/>Tạo file BUG-*.md (Trạng thái: NEW_BUG)"] --> B["🤖 AI Dev Agent đọc BUG-*.md,<br/>xem Trace & Screenshot, sửa source code"]
+    B --> C["✍️ AI Dev ghi log sửa lỗi vào BUG-*.md<br/>Đổi trạng thái -> [RESOLVED_BY_DEV]"]
+    C --> D["🚀 Kích hoạt AI QC Test Runner (--recheck-bugs)"]
+    D --> E["🧪 AI QC chạy lại Spec bị lỗi ở Round N+1"]
+    E --> F{"Kết quả Recheck Round N+1"}
+    F -->|"100% PASS"| G["🟢 Đổi status BUG -> [CLOSED_VERIFIED]<br/>Cập nhật 02_testcase.md thành PASS<br/>Sinh QC_REPORT_R<N+1>.md"]
+    F -->|"Vẫn FAIL"| H["🟠 Đổi status BUG -> [REOPENED]<br/>Ghi lý do & gửi lại AI Dev"]
+    H --> B
 ```
 
 ---
 
+## ⚡ QUY TRÌNH THỰC THI CHUẨN (6 BƯỚC)
+
 ### Bước 1: Thực thi Playwright Suite (Round N)
 ```bash
-# Lệnh chạy chuẩn
 PLAYWRIGHT_BASE_URL=<baseUrl> npx playwright test \
   <e2eFeaturesDir>/<FEATURE_ID>/<FeatureName>.spec.ts \
   --project=<browser> \
   --reporter=html,list
 ```
-- Khởi tạo `roundCount = 1` (trong bộ nhớ — KHÔNG ghi vào config)
 
 ---
 
 ### Bước 2: Phân loại Lỗi & Self-Diagnosis
-
-```
-Khi có test fail, AI đọc:
-├── Stacktrace: Xác định dòng code lỗi
-├── Error message: Phân loại lỗi
-├── Screenshot: Xem trạng thái UI tại thời điểm fail
-└── Trace file (.zip): Xem từng bước thực hiện
-
-Phân loại:
-┌─────────────────────────────────────────────────────┐
-│ LOẠI 1 — Lỗi Mã Test (Script Defect)                 │
-│ → Selector sai/lỗi thời               → SELF-HEAL   │
-│ → Timeout (element chưa xuất hiện)    → SELF-HEAL   │
-│ → Modal/Overlay chặn click            → SELF-HEAL   │
-│ → Auth token hết hạn                  → SELF-HEAL   │
-│ → Missing await                       → SELF-HEAL   │
-├─────────────────────────────────────────────────────┤
-│ LOẠI 2 — Lỗi Sản phẩm (Real Product Bug)            │
-│ → API trả về 500/503                  → BUG REPORT  │
-│ → UI hiển thị sai với tài liệu        → BUG REPORT  │
-│ → Dữ liệu không được lưu vào DB       → BUG REPORT  │
-│ → Logic nghiệp vụ sai                 → BUG REPORT  │
-└─────────────────────────────────────────────────────┘
-```
+- **LOẠI 1 (Lỗi Script)**: Selector timeout, modal hidden, missing await → **AI QC TỰ SỬA MÃ TEST (Self-Healing)** và Re-Run.
+- **LOẠI 2 (Lỗi Sản Phẩm)**: API 500, UI sai URD, DB rò rỉ → **SINH FILE BUG REPORT (`BUG-*.md`) CHUẨN ĐÓNG VẾT HOÀN CHỈNH**.
 
 ---
 
-### Bước 3: TỰ ĐỘNG TẠO FILE REPORT SAU MỖI ROUND TEST (`QC_REPORT_R<N>.md`)
+### Bước 3: SINH FILE BUG REPORT CHUẨN ĐÓNG VẾT (`BUG-[MODULE]-[ID].md`)
 
-> [!IMPORTANT]
-> **BẮT BUỘC:** Sau mỗi round test (cho dù Pass hay Fail), AI **phải tạo/cập nhật ngay** file báo cáo `<SESSION_ID>/04_test_results/QC_REPORT_R<N>.md`.
+Khi phát hiện lỗi sản phẩm thực tế, AI QC tạo file `<SESSION_ID>/04_test_results/BUG-[MODULE]-[ID].md`:
 
-#### Template Báo cáo Round Test (`QC_REPORT_R<N>.md`):
 ```markdown
-# 📊 QC TEST REPORT — ROUND <N>
+# 🐛 BUG-[MODULE]-[ID]: [Tiêu đề ngắn mô tả lỗi]
 
-## 1. Thông tin Tổng quan
-- **Session ID**: `<SESSION_ID>`
-- **Tính năng**: `<FeatureName>`
-- **Thời gian thực thi**: `<ISO timestamp>`
-- **Môi trường (Base URL)**: `<baseUrl>`
-- **Trình duyệt**: `<browser>`
-- **Trạng thái Round**: `[PASS_100% | COMPLETED_WITH_BUGS | IN_PROGRESS_SELF_HEALING]`
+> **Trạng thái vòng đời**: `[NEW_BUG]`
+> **Mức độ nghiêm trọng**: `[Critical | High | Medium | Low]`
+> **Session ID**: `<SESSION_ID>`
+> **QC Spec**: `<SESSION_ID>/01_QC_SPEC_*.md`
+> **Testcase**: `<SESSION_ID>/02_testcase.md#TC_<ID>`
+> **Playwright Spec**: `<SESSION_ID>/03_playwright/*.spec.ts:L<line>`
 
-## 2. Kết quả Thống kê Round <N>
-| Chỉ số | Số lượng | Tỷ lệ (%) |
-|---|---|---|
-| **Tổng số Testcase** | `<TOTAL>` | 100% |
-| **Testcase PASS** | `<PASS>` | `<PASS_PERCENT>%` |
-| **Lỗi mã test (Đã Self-Heal)** | `<HEALED>` | `<HEALED_PERCENT>%` |
-| **Lỗi sản phẩm (Bug thực sự)** | `<BUGS>` | `<BUG_PERCENT>%` |
+---
 
-## 3. Danh sách Kết quả Chi tiết từng Testcase
-| STT | Mã Testcase | Tên Testcase | Trạng thái | Thời gian (s) | Ghi chú & Trace |
-|---|---|---|---|---|---|
-| 1 | `TC_01` | Tạo đơn hàng thành công | ✅ PASS | 2.4s | - |
-| 2 | `TC_02` | Validate email không hợp lệ | ✅ PASS | 1.8s | Self-healed selector in Round 1 |
-| 3 | `TC_03` | Phê duyệt đơn hàng cấp cao | ❌ FAIL (BUG) | 3.2s | Tham chiếu [BUG-001.md](./BUG-001.md) |
+## 📋 1. Thông tin Chi tiết Lỗi (AI QC tạo)
+- **Mô tả hiện tượng**: [Mô tả chi tiết lỗi]
+- **Các bước tái hiện (Steps to Reproduce)**:
+  1. [Bước 1...]
+  2. [Bước 2...]
+- **Kết quả mong đợi (Expected)**: [Theo URD]
+- **Kết quả thực tế (Actual)**: [Lỗi thực tế từ Playwright / API Log]
+- **Bằng chứng**:
+  - Screenshot: `04_test_results/traces/screenshot-fail-TC_03.png`
+  - Playwright Trace: `04_test_results/traces/trace-TC_03.zip`
 
-## 4. Nhật ký Self-Healing trong Round này (nếu có)
-- **File đã sửa**: `e2e/pages/<FeatureName>Page.ts`
-- **Thay đổi**: Sửa locator `getByRole('button', { name: 'Lưu' })` thay cho `.btn-save`
-- **Lý do**: Element `.btn-save` không phản hồi trong 30000ms.
+---
 
-## 5. Kết luận Round <N>
-- **Trạng thái**: `<PASS_100% / CÓ BUG / CẦN RE-RUN ROUND N+1>`
-- **Ghi chú**: `<Mô tả ngắn>`
+## 🤖 2. Hướng dẫn dành cho AI Dev Agent (Instructions for AI Dev)
+> **Gửi AI Dev Agent:**
+> 1. Đọc thông tin trên và file trace tại `04_test_results/traces/`.
+> 2. Sửa mã nguồn sản phẩm (Backend API / Frontend Web / DB schema).
+> 3. Sau khi sửa xong và test local thành công, **cập nhật Mục 3 bên dưới** (`Dev Resolution Log`):
+>    - Đổi `Trạng thái vòng đời` ở đầu file thành: `[RESOLVED_BY_DEV]`
+>    - Điền danh sách file đã sửa và commit hash vào Mục 3.
+> 4. Yêu cầu AI QC kiểm tra lại bằng lệnh:
+>    `ai-playwright-test-runner --recheck-bug <SESSION_ID>/04_test_results/BUG-[MODULE]-[ID].md`
+
+---
+
+## 🛠️ 3. Nhật ký Sửa lỗi của AI Dev (AI Dev Resolution Log)
+*(AI Dev tự động điền mục này sau khi fix xong code)*
+- **AI Dev Agent ID**: `<Dev Agent ID>`
+- **Thời điểm hoàn tất fix**: `<ISO timestamp>`
+- **Mã nguồn đã sửa (Changed Files)**:
+  - `src/controllers/order.controller.ts` (L120: fix validation logic)
+- **Commit Hash / PR**: `commit a1b2c3d`
+- **Giải thích phương án sửa**: [Giải thích cách fix]
+
+---
+
+## 🧪 4. Nhật ký Kiểm tra lại của AI QC (AI QC Re-verification Log)
+*(AI QC tự động điền mục này sau khi recheck)*
+- **Round kiểm tra lại**: `Round <N+1>`
+- **Thời điểm Recheck**: `<ISO timestamp>`
+- **Kết quả Recheck**: `[PASSED ✅ / FAILED ❌]`
+- **Cập nhật Trạng thái cuối**: `[CLOSED_VERIFIED ✅]` *(nếu Pass)* HOẶC `[REOPENED ❌]` *(nếu vẫn Fail)*
+- **Ghi chú QC**: [Xác nhận lỗi đã được khắc phục 100% trên môi trường thật]
 ```
 
 ---
 
-### Bước 4: TỰ ĐỘNG CẬP NHẬT FILE TEST CASE (`02_testcase.md`)
+### Bước 4: Chế độ RECHECK BUGS Tự động (`--recheck-bugs`)
 
-> [!IMPORTANT]
-> **CƠ CHẾ CẬP NHẬT TESTCASE TỰ ĐỘNG:**
-> Cho dù các Round test **CHƯA PHÁT HIỆN BUG (100% PASS)** hay **CÓ BUG**, AI **BẮT BUỘC phải cập nhật trực tiếp** file `<SESSION_ID>/02_testcase.md` (và đồng bộ về `paths.testcaseOutputDir`).
+Khi chạy ở chế độ Recheck (hoặc khi AI Dev sửa xong bug và yêu cầu recheck):
 
-#### 🟢 Tình huống 1: CHƯA PHÁT HIỆN BUG (100% PASS)
-AI thực hiện:
-1. Chèn block **🏆 QC EXECUTION CERTIFICATION** vào đầu file `<SESSION_ID>/02_testcase.md`:
-   ```markdown
-   > **🏆 QC EXECUTION CERTIFIED — 100% PASS (0 BUGS FOUND)**
-   > - **Trạng thái kiểm thử**: ✅ PASSED 100%
-   > - **Số Round đã thực thi**: <N> rounds
-   > - **Thời điểm chứng nhận**: <ISO timestamp>
-   > - **Báo cáo chi tiết Round cuối**: [QC_REPORT_R<N>.md](./04_test_results/QC_REPORT_R<N>.md)
-   ```
-2. Cập nhật dòng trạng thái từng testcase trong file `02_testcase.md`:
-   - Từ: `### TC_01: Tạo đơn hàng`
-   - Thành: `### TC_01: Tạo đơn hàng [STATUS: ✅ PASS | Verified: Round <N>]`
-
-#### 🔴 Tình huống 2: CÓ PHÁT HIỆN BUG
-AI thực hiện:
-1. Chèn block **⚠️ QC EXECUTION REPORT — BUGS DETECTED** vào đầu file `<SESSION_ID>/02_testcase.md`:
-   ```markdown
-   > **⚠️ QC EXECUTION REPORT — BUGS DETECTED**
-   > - **Trạng thái kiểm thử**: ❌ PARTIAL FAIL (<N_BUG> bugs phát hiện)
-   > - **Danh sách Bug**: [BUG-001.md](./04_test_results/BUG-001.md)
-   ```
-2. Cập nhật từng testcase bị fail trong file `02_testcase.md`:
-   - Thành: `### TC_03: Phê duyệt đơn hàng [STATUS: ❌ FAIL | Ref: BUG-001.md]`
+1. AI QC quét tất cả file `BUG-*.md` có `Trạng thái vòng đời: [RESOLVED_BY_DEV]`.
+2. Đọc dòng `Playwright Spec` trong `BUG-*.md` để xác định file test và testcase cần chạy lại.
+3. Chạy lại Playwright test ở Round $N+1$.
+4. Cập nhật kết quả:
+   - **NẾU PASS 100%**:
+     - Đổi status trong `BUG-*.md` thành `[CLOSED_VERIFIED ✅]`.
+     - Cập nhật Nhật ký Mục 4 trong `BUG-*.md`.
+     - Cập nhật trạng thái testcase trong `02_testcase.md` thành `[STATUS: ✅ PASS | Verified: Round N+1 (Bug Resolved)]`.
+     - Xuất báo cáo `QC_REPORT_R<N+1>.md` xác nhận bug đã được đóng vết.
+   - **NẾU VẪN FAIL**:
+     - Đổi status trong `BUG-*.md` thành `[REOPENED ❌]`.
+     - Ghi thêm chi tiết lỗi còn tồn đọng vào Mục 4 để AI Dev tiếp tục sửa.
 
 ---
 
-### Bước 5: Self-Healing Loop & Hard Cap Safety
+### Bước 5: TỰ ĐỘNG SINH QC_REPORT_R<N>.md & CẬP NHẬT 02_testcase.md
+- Sau mỗi round test, xuất file `<SESSION_ID>/04_test_results/QC_REPORT_R<N>.md`.
+- Cập nhật file `<SESSION_ID>/02_testcase.md` (đánh dấu PASS/FAIL, nếu 0 bug thì chèn block **🏆 QC EXECUTION CERTIFIED — 100% PASS**).
 
-> [!CAUTION]
-> **HARD CAP — Giới hạn an toàn tuyệt đối:**
-> - Tối đa `maxSelfHealPerFile` lần sửa/file (mặc định: 3)
-> - Tối đa `maxSuiteReruns` lần Re-Run suite (mặc định: 5)
-> - Khi đạt giới hạn: DỪNG và xuất báo cáo `QC_REPORT_R<N>.md` với trạng thái `PARTIAL_FAIL_HARD_CAP`.
+---
+
+### Bước 6: Self-Healing Loop & Hard Cap Safety
+- Max 3 lần self-heal/file, max 5 lần re-run suite.
 
 ---
 
 ## 💾 OUTPUT (SESSION-SCOPED)
 
 1. `<SESSION_ID>/04_test_results/QC_REPORT_R<N>.md` — File report chi tiết sau **MỖI** Round test.
-2. `<SESSION_ID>/02_testcase.md` — File testcase **ĐÃ ĐƯỢC CẬP NHẬT TRẠNG THÁI & CẤP CHỨNG NHẬN PASS / FAIL**.
-3. `<SESSION_ID>/04_test_results/BUG-<MODULE>-<ID>.md` — Bug reports (nếu có lỗi sản phẩm).
+2. `<SESSION_ID>/02_testcase.md` — File testcase **ĐÃ CẬP NHẬT TRẠNG THÁI & CHỨNG NHẬN PASS / FAIL**.
+3. `<SESSION_ID>/04_test_results/BUG-*.md` — File Bug Report có **ĐỦ HƯỚNG DẪN AI DEV FIX & NHẬT KÝ ĐÓNG VẾT HAI CHIỀU**.
 4. `<SESSION_ID>/04_test_results/traces/` — Playwright traces & screenshots.
-
-### Cập nhật SESSION_CONTEXT.json:
-```json
-{
-  "step": "playwright-test-runner",
-  "status": "COMPLETED",
-  "result": "PASS_100%" | "PARTIAL_FAIL_HARD_CAP",
-  "totalTests": N,
-  "passedTests": M,
-  "failedTests": K,
-  "suiteRerunCount": X,
-  "lastReportFile": "<SESSION_ID>/04_test_results/QC_REPORT_R<N>.md",
-  "updatedTestcaseFile": "<SESSION_ID>/02_testcase.md",
-  "bugReports": ["<SESSION_ID>/04_test_results/BUG-*.md"],
-  "completedAt": "<ISO timestamp>"
-}
-```
-Cập nhật REGISTRY.json: Di chuyển session `activeSessions` → `completedSessions`. **KHÔNG ghi vào config chung.**
