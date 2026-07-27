@@ -1,11 +1,11 @@
 ---
 name: qc-pipeline-orchestrator
-description: "Master Pipeline Orchestrator cho toàn bộ hệ thống kiểm thử tự động AI (Universal QC Automation). Điều phối 4 Skill chuyên biệt theo từng bước độc lập (QA Lead → Testcase Generator → Playwright Spec Builder → Self-Healing Test Runner). Hiển thị Team Progress Dashboard trực quan, không ôm đồm, không bịa thông tin khi mơ hồ, báo cáo rõ ràng file tạo ra và hướng dẫn bước tiếp theo cho team."
+description: "Master Pipeline Orchestrator cho toàn bộ hệ thống kiểm thử tự động AI (Universal QC Automation). Điều phối 5 Skill chuyên biệt theo từng bước độc lập (Step 0: Diagnostics & Setup -> Step 1: QA Lead -> Step 2: Testcase Generator -> Step 3: Spec Builder -> Step 4: Test Runner). Hiển thị Team Progress Dashboard trực quan, không ôm đồm, không bịa thông tin khi mơ hồ, báo cáo rõ ràng file tạo ra và hướng dẫn bước tiếp theo cho team."
 ---
 
-# 🤖 QC Pipeline Orchestrator — Universal AI Testing Pipeline (v2.3)
+# 🤖 QC Pipeline Orchestrator — Universal AI Testing Pipeline (v2.4)
 
-Skill này đóng vai trò **MASTER PIPELINE ORCHESTRATOR** điều phối kiểm thử từng bước cô lập, minh bạch và trực quan cho toàn team.
+Skill này đóng vai trò **MASTER PIPELINE ORCHESTRATOR** điều phối kiểm thử từng bước cô lập, minh bạch và trực quan cho toàn team — bao gồm cả bước **Chẩn đoán & Cài đặt Môi trường Playwright Tự động (Step 0)**.
 
 > [!IMPORTANT]
 > **3 NGUYÊN TẮC VẬN HÀNH THÉP DÀNH CHO TEAM:**
@@ -15,7 +15,7 @@ Skill này đóng vai trò **MASTER PIPELINE ORCHESTRATOR** điều phối kiể
 
 ---
 
-## ⚙️ CẤU HÌNH BAN ĐẦU (ONBOARDING GATE)
+## ⚙️ CẤU HÌNH BAN ĐẦU & CHẨN ĐOÁN MÔI TRƯỜNG
 
 Khi kích hoạt lần đầu hoặc `isDefaultLocked: false`, AI Agent **BẮT BUỘC** hỏi người dùng các thông tin theo thứ tự:
 
@@ -27,11 +27,12 @@ Câu 2/5: Thư mục chứa tài liệu yêu cầu (URD/BRD)?
 Câu 3/5: URL của ứng dụng khi chạy test (Base URL)?
 Câu 4/5: Thư mục e2e của dự án (nơi có playwright.config.ts)?
 Câu 5/5: Bạn muốn chạy:
-   → A) Full pipeline từng bước một (có dừng báo cáo sau mỗi bước)
-   → B) Chỉ chạy Bước 1 (ai-qa-lead)
-   → C) Chỉ chạy Bước 2 (ai-testcase-generator)
-   → D) Chỉ chạy Bước 3 (ai-playwright-spec-builder)
-   → E) Chỉ chạy Bước 4 (ai-playwright-test-runner)
+   → A) Full pipeline từ Bước 0 đến Bước 4 (tự động chẩn đoán môi trường -> URD -> testcase -> code -> test)
+   → B) Chỉ chạy Bước 0: Chẩn đoán & Cài đặt Môi trường Playwright (ai-playwright-environment-engineer)
+   → C) Chỉ chạy Bước 1: Phân tích URD (ai-qa-lead)
+   → D) Chỉ chạy Bước 2: Sinh Testcase (ai-testcase-generator)
+   → E) Chỉ chạy Bước 3: Sinh Code Playwright (ai-playwright-spec-builder)
+   → F) Chỉ chạy Bước 4: Chạy Test & Self-Healing (ai-playwright-test-runner)
 ```
 
 ---
@@ -51,17 +52,18 @@ Câu 5/5: Bạn muốn chạy:
 📌 Feature Target  : <FEATURE_ID>
 📌 Session Directory: <sessionRegistryDir>/<SESSION_ID>/
 --------------------------------------------------------------------------------
-👉 BƯỚC TIẾP THEO: Bắt đầu Bước 1 — Phân tích URD & Tạo QC Spec bằng skill [ai-qa-lead].
+👉 BƯỚC TIẾP THEO: Bắt đầu Bước 0 — Chẩn đoán Môi trường & Auto Setup Playwright bằng skill [ai-playwright-environment-engineer].
 ================================================================================
 ```
 
 ---
 
-## 🧭 BẢN ĐỒ TIẾN TRÌNH PIPELINE TỪNG BƯỚC
+## 🧭 BẢN ĐỒ TIẾN TRÌNH PIPELINE TỪNG BƯỚC (5 STEPS)
 
 ```mermaid
 graph TD
-    INIT["🔑 Session Init<br/>(SESSION_ID)"] --> S1["👑 Step 1: ai-qa-lead<br/>URD → QC Spec"]
+    INIT["🔑 Session Init<br/>(SESSION_ID)"] --> S0["🎭 Step 0: ai-playwright-environment-engineer<br/>Node.js, Packages, Browsers, Proxy, Config"]
+    S0 -->|"Env Ready & Dashboard #0"| S1["👑 Step 1: ai-qa-lead<br/>URD → QC Spec"]
     S1 -->|"Dashboard #1 & Check"| S2["🧪 Step 2: ai-testcase-generator<br/>QC Spec → testcase.md"]
     S2 -->|"Dashboard #2 & Check"| S3["🏗️ Step 3: ai-playwright-spec-builder<br/>testcase.md → POM + *.spec.ts"]
     S3 -->|"Dashboard #3 & Check"| S4["🚀 Step 4: ai-playwright-test-runner<br/>Run → Self-Heal → QC Report + Auto Update Testcase"]
@@ -70,35 +72,22 @@ graph TD
 
 ---
 
-## 📋 DASHBOARD MẪU CHUẨN IN SAU MỖI BƯỚC (TEAM PROGRESS DASHBOARD)
+## 📋 PHÂN PHỐI NHIỆM VỤ 5 SKILLS CHUYÊN BIỆT
 
-Sau khi bất kỳ skill thành phần nào chạy xong, AI Agent **BẮT BUỘC** in bản tin Dashboard trực quan:
+### 0. [ai-playwright-environment-engineer](../ai-playwright-environment-engineer/SKILL.md) — Environment & Setup Gate (Bước 0)
+- **Nhiệm vụ**: Tự động kiểm tra Node.js, Playwright packages, Browser Binaries, Proxy/VPN, Ports, WebServer, tự cài đặt nếu thiếu, và tối ưu `playwright.config.ts` không phá vỡ dự án.
 
-```markdown
-================================================================================
-📊 BÁO CÁO TIẾN ĐỘ THỰC THI (TEAM PROGRESS DASHBOARD)
-================================================================================
-📌 Session ID      : SES_20260727_164500_CREATE_ORDER
-📌 Feature         : Tạo Đơn Hàng Mới (CREATE_ORDER)
-📌 Skill vừa chạy  : [ai-qa-lead] (Bước 1/4)
-📌 Trạng thái bước : ✅ HOÀN THÀNH 100%
---------------------------------------------------------------------------------
-✅ ĐÃ HOÀN THÀNH Ở BƯỚC NÀY:
-   1. Phân tích 100% tài liệu URD tại docs/requirements/order-spec.md.
-   2. Phỏng vấn và làm rõ 2 quy tắc nghiệp vụ mơ hồ với User.
-   3. Tạo bản đặc tả QC Spec đầy đủ Ma trận 8 Trụ cột Chất lượng.
+### 1. [ai-qa-lead](../ai-qa-lead/SKILL.md) — QA Lead Analyst (Bước 1)
+- **Nhiệm vụ**: Đọc URD/tài liệu yêu cầu, phỏng vấn PO/user làm rõ mơ hồ (Zero Hallucination), tạo QC Master Spec.
 
-📁 TẢI NGUYÊN & FILE ĐÃ PHÁT SINH:
-   📄 QC Spec File  : docs/qc-sessions/SES_.../01_QC_SPEC_CREATE_ORDER_v1.0.md
-   📝 Session Log   : docs/qc-specs/logs/LOG_CREATE_ORDER_SES_....md
-   📋 Session State : docs/qc-sessions/SES_.../SESSION_CONTEXT.json
+### 2. [ai-testcase-generator](../ai-testcase-generator/SKILL.md) — Testcase Architect (Bước 2)
+- **Nhiệm vụ**: Đọc QC Spec, bóc tách 8 trụ cột chất lượng thành bộ testcase Markdown chuẩn (`02_testcase.md`).
 
-👉 BƯỚC TIẾP THEO CẦN LÀM:
-   Chạy Bước 2 — Skill [ai-testcase-generator] để bóc tách bộ testcase Markdown.
-   💬 Lệnh kích hoạt tiếp theo:
-   "Hãy chạy skill ai-testcase-generator cho session SES_20260727_164500_CREATE_ORDER"
-================================================================================
-```
+### 3. [ai-playwright-spec-builder](../ai-playwright-spec-builder/SKILL.md) — Playwright Code Generator (Bước 3)
+- **Nhiệm vụ**: Đọc `02_testcase.md` + auth configs, sinh POM classes + Playwright Spec files (`*.spec.ts`).
+
+### 4. [ai-playwright-test-runner](../ai-playwright-test-runner/SKILL.md) — Self-Healing & Visual Replay Engine (Bước 4)
+- **Nhiệm vụ**: Chạy Playwright REAL mode, tự sửa lỗi script, sinh `QC_REPORT_R<N>.md` (kèm lệnh `--ui` replay), tự động cập nhật `02_testcase.md` (chứng nhận 100% PASS), sinh `BUG-*.md` và hỗ trợ recheck hai chiều.
 
 ---
 
