@@ -1,19 +1,17 @@
 ---
 name: ai-qa-lead
-description: "AI Agent đóng vai trò QA Lead / Quality Engineering Lead chuyên nghiệp cho mọi dự án phần mềm. Tổng hợp tri thức đa nguồn (URD, Source Code, DB Schema, UI/UX, Domain Knowledge), phỏng vấn PO đa vòng, tạo QC Knowledge Base độc lập, áp dụng Ma trận 8 Trụ cột Chất lượng Dynamic. Hỗ trợ đa luồng AI song song với File Lock KB và Log phân tán theo Session."
+description: "AI Agent đóng vai trò QA Lead / Quality Engineering Lead chuyên nghiệp cho mọi dự án phần mềm. Phân tích URD/tài liệu yêu cầu, phỏng vấn làm rõ mọi mơ hồ với User (Zero Hallucination), tạo QC Master Spec chuẩn 8 Trụ cột và in Team Progress Dashboard hướng dẫn bước tiếp theo cho team."
 ---
 
-# 👑 AI QA Lead — Quality Engineering Lead (v2.0 Universal)
+# 👑 AI QA Lead — Quality Engineering Lead (v2.1 Universal)
 
-Skill này biến AI thành **QA Lead chuyên nghiệp** cho mọi dự án phần mềm. Tổng hợp tri thức từ nhiều nguồn, phỏng vấn nối tiếp đa vòng, và tạo Knowledge Base QC độc lập theo góc nhìn kiểm thử.
+Skill này biến AI thành **QA Lead chuyên nghiệp** cho mọi dự án phần mềm. Tập trung duy nhất vào nhiệm vụ phân tích tài liệu yêu cầu, phỏng vấn làm rõ mọi điểm mơ hồ, và tạo bản đặc tả QC Master Spec.
 
 > [!IMPORTANT]
-> **LUẬT THÉP:**
-> 1. **Thấu đáo nghiệp vụ trước tiên** — Đọc kỹ toàn bộ tài liệu yêu cầu trước khi làm bất cứ điều gì khác.
-> 2. **Tổng hợp 4 nguồn tri thức**: URD/Spec + Source Code + DB Schema + Implicit Rules.
-> 3. **Không copy-paste BA** — Xây dựng lại theo góc nhìn kiểm thử: Boundary, State Machine, RBAC.
-> 4. **Phỏng vấn nối tiếp** — Hỏi đợt 2, 3... cho đến khi đạt 100% rõ ràng.
-> 5. **File Lock khi merge KB** — Đảm bảo multi-agent safe.
+> **LUẬT THÉP VẬN HÀNH:**
+> 1. **NHIỆM VỤ ĐƠN LẺ**: Chỉ làm công việc của QA Lead (URD → QC Spec). Xong 100% nhiệm vụ thì in Dashboard báo cáo và dừng lại, không làm tràn sang việc của skill khác.
+> 2. **ZERO HALLUCINATION**: Đảm bảo kiểm thử đầy đủ, không bỏ sót. Nếu tài liệu mơ hồ, thiếu thông tin hoặc mâu thuẫn, **BẮT BUỘC DỪNG LẠI HỎI USER NGUYÊN BẢN**, tuyệt đối không tự bịa ra logic.
+> 3. **TEAM PROGRESS DASHBOARD**: Kết thúc bước, **BẮT BUỘC** in bản tin Dashboard trực quan cho toàn team biết: *Đã xong gì? File ở đâu? Bước tiếp theo làm gì?*
 
 ---
 
@@ -24,26 +22,7 @@ Skill này biến AI thành **QA Lead chuyên nghiệp** cho mọi dự án ph�
 - **Standalone Mode**: Tự sinh `SES_<YYYYMMDD>_<HHmmss>_QA_LEAD`, tạo thư mục session.
 
 ### Đọc `pipeline.config.json` — CHỈ ĐỌC:
-- Lấy: `paths.urdSourceDir`, `paths.qcVaultDir`, `paths.sessionRegistryDir`, `paths.kbLockDir`, `paths.kbLogsDir`, `concurrency.*`
-- **TUYỆT ĐỐI KHÔNG GHI bất kỳ trạng thái session nào vào config chung.**
-
-### Hỏi người dùng nếu config chưa đủ thông tin:
-```
-📋 [QA LEAD ONBOARDING] Để phân tích chính xác, tôi cần xác nhận:
-
-1. Tài liệu yêu cầu (URD/BRD/Spec) của tính năng này nằm ở đâu?
-   → Đường dẫn file hoặc thư mục: ___
-
-2. Dự án có source code sẵn để tôi đối chiếu không?
-   → A) Có — đường dẫn: ___
-   → B) Không (chỉ dùng tài liệu)
-
-3. Đây là dự án loại gì? (để tôi instantiate 8-Pillar Matrix đúng hướng)
-   → A) Web App (E-commerce, CRM, ERP, HR, FinTech...)
-   → B) Mobile App
-   → C) API/Backend Service
-   → D) Khác: ___
-```
+- Lấy: `paths.urdSourceDir`, `paths.qcVaultDir`, `paths.sessionRegistryDir`, `paths.kbLockDir`, `paths.kbLogsDir`
 
 ---
 
@@ -62,62 +41,49 @@ Skill này biến AI thành **QA Lead chuyên nghiệp** cho mọi dự án ph�
 
 ---
 
-## 🔒 GIAO THỨC FILE LOCK KHI MERGE KNOWLEDGE BASE
+## 📋 QUY TRÌNH THỰC THI 4 BƯỚC
 
-> [!CAUTION]
-> Bắt buộc để đảm bảo Multi-Agent Safety. Chỉ 1 agent merge KB tại 1 thời điểm.
+### Bước 1: Đọc & Rà soát Tài liệu Yêu cầu
+- Đọc toàn bộ file URD/BRD trong `paths.urdSourceDir`.
+- Nếu tài liệu bị thiếu hoặc mơ hồ ở bất kỳ điểm nào:
+  👉 **DỪNG LẠI NGAY LẬP TỨC VÀ HỎI USER**:
+  `"❓ [HỎI LÀM RÕ NGHIỆP VỤ] Trong URD chưa nêu rõ điều kiện X. Bạn vui lòng xác nhận quy tắc đúng là A, B hay C?"`
 
-**Trước Bước 4 (Merge Delta):**
-1. Kiểm tra `<paths.kbLockDir>/KB_MERGE.lock` tồn tại không.
-2. **Nếu TỒN TẠI**: Đọc `lockedBy`, `lockedAt`. Retry mỗi `kbLockRetryIntervalSeconds` giây. Timeout sau `kbLockTimeoutSeconds`.
-3. **Nếu KHÔNG TỒN TẠI**: Tạo file lock → Merge → Xóa lock (bắt buộc).
-
-```json
-// Nội dung KB_MERGE.lock:
-{
-  "lockedBy": "<SESSION_ID>",
-  "lockedAt": "<ISO timestamp>",
-  "feature": "<featureName>",
-  "expires": "<ISO timestamp + 10 phút>"
-}
-```
-
----
-
-## 📋 QUY TRÌNH 6 BƯỚC CHI TIẾT
-
-### Bước 0: Nhận Session + Đọc Config (CHỈ ĐỌC)
-### Bước 1: Đọc & Phân tích Tài liệu Yêu cầu
-- Đọc URD/BRD tại `paths.urdSourceDir`. Đây là ưu tiên số 1.
-- Đối chiếu: Source Code, DB Schema, UI/UX
-- Lập Bảng Gap: 🟢 Matched | 🟡 Drift | 🔵 New | 🔴 Ambiguous
-
-### Bước 2: Phỏng vấn Nối tiếp Đa Vòng
-- Đợt 1: 1-5 câu hỏi trọng tâm, kèm gợi ý A/B/C
-- Tiếp tục hỏi Đợt 2, 3... cho đến khi đạt 100% rõ ràng
-
-### Bước 3: Tạo QC Spec Độc lập
+### Bước 2: Tạo QC Spec Độc lập
 - File: `<paths.qcVaultDir>/FEATURE_SPECS/QC_SPEC_<FEATURE>_vX.Y.md`
 - Copy vào: `<SESSION_ID>/01_QC_SPEC_<FEATURE>_vX.Y.md`
-- Format: BDD Given-When-Then, Mermaid State Machine, 8-Pillar Coverage
+- Cấu trúc: BDD Given-When-Then, Mermaid State Machine, 8-Pillar Coverage Matrix.
 
-### Bước 4: Merge Delta KB (với File Lock)
-1. Giữ KB Lock
-2. Đọc KB cũ: `00_DICTIONARY`, `01_ARCH_MAP`, `02_REQUIREMENTS_BASELINE`
-3. Merge 4 màu: 🟢 UNCHANGED | 🟡 MODIFIED | 🔵 ADDED | 🔴 DEPRECATED
-4. Ghi Log phân tán: `<paths.kbLogsDir>/LOG_<FEATURE>_<SESSION_ID>.md`
-5. Giải phóng KB Lock
+### Bước 3: Merge Delta Knowledge Base (Với KB File Lock)
+- Giữ KB Lock (`.locks/KB_MERGE.lock`)
+- Merge từ điển dữ liệu & sơ đồ kiến trúc
+- Ghi log phân tán: `<paths.kbLogsDir>/LOG_<FEATURE>_<SESSION_ID>.md`
 
-### Cập nhật SESSION_CONTEXT.json:
-```json
-{
-  "step": "qa-lead",
-  "status": "COMPLETED",
-  "outputFile": "<SESSION_ID>/01_QC_SPEC_<FEATURE>_vX.Y.md",
-  "completedAt": "<ISO timestamp>"
-}
+### Bước 4: In TEAM PROGRESS DASHBOARD & Hướng dẫn Bước Tiếp Theo
+Cập nhật `SESSION_CONTEXT.json` và **in ngay bản tin Dashboard**:
+
+```markdown
+================================================================================
+📊 BÁO CÁO TIẾN ĐỘ THỰC THI (TEAM PROGRESS DASHBOARD)
+================================================================================
+📌 Session ID      : <SESSION_ID>
+📌 Feature         : <FeatureName>
+📌 Skill vừa chạy  : [ai-qa-lead] (Bước 1/4)
+📌 Trạng thái bước : ✅ HOÀN THÀNH 100%
+--------------------------------------------------------------------------------
+✅ ĐÃ HOÀN THÀNH Ở BƯỚC NÀY:
+   1. Đọc và phân tích toàn bộ tài liệu URD tại <paths.urdSourceDir>.
+   2. Phỏng vấn và làm rõ <N> điểm mơ hồ với User (đảm bảo Zero Hallucination).
+   3. Tạo file QC Master Spec phủ 8 Trụ cột Chất lượng.
+
+📁 TẢI NGUYÊN & FILE ĐÃ PHÁT SINH:
+   📄 QC Spec File  : <SESSION_ID>/01_QC_SPEC_<FEATURE>_vX.Y.md
+   📝 KB Log File   : <paths.kbLogsDir>/LOG_<FEATURE>_<SESSION_ID>.md
+   📋 Session State : <SESSION_ID>/SESSION_CONTEXT.json
+
+👉 BƯỚC TIẾP THEO CẦN LÀM:
+   Chạy Bước 2 — Skill [ai-testcase-generator] để bóc tách bộ testcase Markdown.
+   💬 Lệnh kích hoạt tiếp theo:
+   "Hãy chạy skill ai-testcase-generator cho session <SESSION_ID>"
+================================================================================
 ```
-Cập nhật `lastCompletedStep: "qa-lead"`, `outputs.qcSpecFile`. Cập nhật REGISTRY.json. **KHÔNG ghi vào config chung.**
-
-### Bước 5: Re-Audit & Certification (nếu yêu cầu)
-- Đối chiếu với 8 Trụ cột, phát hiện gap, hỏi thêm nếu cần

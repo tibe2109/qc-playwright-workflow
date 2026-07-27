@@ -1,11 +1,17 @@
 ---
 name: ai-testcase-generator
-description: "Skill chuyên biệt sinh bộ Testcase Markdown từ QC Spec. Bóc tách 100% quy tắc nghiệp vụ, luồng trạng thái, điều kiện biên và rủi ro theo Ma trận 8 Trụ cột Chất lượng thành bộ testcase chuẩn mực. Áp dụng cho mọi dự án. Hỗ trợ multi-agent concurrent không conflict."
+description: "Skill chuyên biệt sinh bộ Testcase Markdown từ QC Spec. Bóc tách 100% quy tắc nghiệp vụ theo Ma trận 8 Trụ cột Chất lượng. Không tự bịa thông tin khi mơ hồ (Zero Hallucination), in Team Progress Dashboard trực quan và hướng dẫn bước tiếp theo cho team."
 ---
 
-# 🧪 AI Testcase Generator — Universal Test Case Architect (v2.0)
+# 🧪 AI Testcase Generator — Universal Test Case Architect (v2.1)
 
-Skill này tạo ra bộ testcase chuyên sâu từ QC Spec, phủ trọn 8 trụ cột chất lượng. Áp dụng cho mọi dự án, mọi domain nghiệp vụ.
+Skill này bóc tách bộ testcase chuyên sâu từ bản QC Spec, phủ trọn 8 trụ cột chất lượng. Tập trung duy nhất vào nhiệm vụ sinh file `02_testcase.md`.
+
+> [!IMPORTANT]
+> **LUẬT THÉP VẬN HÀNH:**
+> 1. **NHIỆM VỤ ĐƠN LẺ**: Chỉ bóc tách QC Spec → `02_testcase.md`. Xong 100% nhiệm vụ thì in Dashboard báo cáo và dừng lại, không làm tràn sang việc của skill khác.
+> 2. **ZERO HALLUCINATION**: Đảm bảo bộ testcase đầy đủ, không bỏ sót. Nếu QC Spec chưa rõ ràng hoặc mâu thuẫn, **BẮT BUỘC DỪNG LẠI HỎI USER KHI MƠ HỒ**, không tự bịa ra kịch bản sai thực tế.
+> 3. **TEAM PROGRESS DASHBOARD**: Kết thúc bước, **BẮT BUỘC** in bản tin Dashboard trực quan cho toàn team biết: *Đã xong gì? File ở đâu? Bước tiếp theo làm gì?*
 
 ---
 
@@ -17,21 +23,6 @@ Skill này tạo ra bộ testcase chuyên sâu từ QC Spec, phủ trọn 8 tr�
 
 ### Đọc `pipeline.config.json` — CHỈ ĐỌC:
 - Lấy: `paths.qcVaultDir`, `paths.testcaseOutputDir`, `paths.sessionRegistryDir`
-- **TUYỆT ĐỐI KHÔNG GHI trạng thái session vào config chung.**
-- In: `⚙️ [TESTCASE GEN] Session: <SESSION_ID> | Input: <qcVaultDir> | Output: <testcaseOutputDir>`
-
-### Hỏi người dùng nếu chưa rõ:
-```
-🎯 [XÁC ĐỊNH MỤC TIÊU] Tôi cần xác nhận tính năng cần viết testcase:
-
-Tôi đã quét thư mục QC Spec và tìm thấy:
-1. [Feature 1] — QC_SPEC_<FEATURE1>_vX.Y.md
-2. [Feature 2] — QC_SPEC_<FEATURE2>_vX.Y.md
-3. [Feature 3] — QC_SPEC_<FEATURE3>_vX.Y.md
-4. Tất cả các tính năng trên
-
-👉 Bạn muốn viết testcase cho tính năng nào? (Nhập số hoặc tên)
-```
 
 ---
 
@@ -48,47 +39,43 @@ Tôi đã quét thư mục QC Spec và tìm thấy:
 | 7. External Integration | Timeout, 500 error | Cổng thanh toán trả về lỗi |
 | 8. Implicit Rules | Audit trail, Auto-numbering | Mã đơn hàng được sinh tự động và duy nhất |
 
-**Quy tắc bắt buộc:**
-- Mỗi testcase phải là **Chuỗi E2E liên hoàn** (không viết happy case đơn giản)
-- Phải chứa: Tạo → Thao tác → Xác minh DB/State → Kiểm tra side effects
-- Nhúng các kịch bản Boundary/IDOR/Race vào giữa luồng chức năng chính
-
 ---
 
-## 📋 TEMPLATE TESTCASE CHUẨN
+## 📋 QUY TRÌNH THỰC THI 3 BƯỚC
+
+### Bước 1: Đọc QC Spec (`01_QC_SPEC_*.md`)
+- Đọc file `<SESSION_ID>/01_QC_SPEC_*.md`.
+- Nếu chưa có file QC Spec: Dừng lại và báo user chạy skill `ai-qa-lead` trước.
+- Nếu gặp luồng mâu thuẫn: Dừng lại hỏi user xác nhận.
+
+### Bước 2: Sinh bộ Testcase Markdown chuẩn
+- Đưa vào file `<SESSION_ID>/02_testcase.md`.
+- Mỗi testcase là một **Chuỗi E2E liên hoàn**: Tiền đề → Các bước → Kết quả mong đợi (UI + DB + API).
+
+### Bước 3: In TEAM PROGRESS DASHBOARD & Hướng dẫn Bước Tiếp Theo
+Cập nhật `SESSION_CONTEXT.json` và **in ngay bản tin Dashboard**:
 
 ```markdown
-# Danh Sách Testcase: [Tên Tính năng]
+================================================================================
+📊 BÁO CÁO TIẾN ĐỘ THỰC THI (TEAM PROGRESS DASHBOARD)
+================================================================================
+📌 Session ID      : <SESSION_ID>
+📌 Feature         : <FeatureName>
+📌 Skill vừa chạy  : [ai-testcase-generator] (Bước 2/4)
+📌 Trạng thái bước : ✅ HOÀN THÀNH 100%
+--------------------------------------------------------------------------------
+✅ ĐÃ HOÀN THÀNH Ở BƯỚC NÀY:
+   1. Bóc tách 100% quy tắc nghiệp vụ từ QC Spec thành bộ testcase Markdown.
+   2. Phủ trọn Ma trận 8 Trụ cột Chất lượng (gồm <N> testcases).
+   3. Đảm bảo đầy đủ các kịch bản Happy Path, Boundary, Security RBAC & Race Condition.
 
-## 1. Danh sách Testcase
+📁 TẢI NGUYÊN & FILE ĐÃ PHÁT SINH:
+   📄 Testcase File : <SESSION_ID>/02_testcase.md
+   📋 Session State : <SESSION_ID>/SESSION_CONTEXT.json
 
-### TC_[PREFIX].[STT]: [Tên Testcase mô tả rõ ràng hành vi kiểm thử]
-- **Mức Độ Ưu Tiên:** [High | Medium | Low]
-- **Điều Kiện/ Dữ Liệu Test:**
-  [Role đăng nhập, điều kiện tiền đề, dữ liệu test mẫu]
-- **Các Bước Thực Hiện:**
-  1. [Bước 1...]
-  2. [Bước 2...]
-- **Kết Quả Mong Đợi:**
-  [UI/UX, popup, trạng thái DB, API response, phân quyền]
-
----
+👉 BƯỚC TIẾP THEO CẦN LÀM:
+   Chạy Bước 3 — Skill [ai-playwright-spec-builder] để sinh code Playwright (POM + *.spec.ts).
+   💬 Lệnh kích hoạt tiếp theo:
+   "Hãy chạy skill ai-playwright-spec-builder cho session <SESSION_ID>"
+================================================================================
 ```
-
----
-
-## 💾 OUTPUT (SESSION-SCOPED)
-
-- **Chính**: `<SESSION_ID>/02_testcase.md`
-- **Backup**: `<paths.testcaseOutputDir>/v<VERSION>/<FeatureName>/testcase.md`
-
-### Cập nhật SESSION_CONTEXT.json:
-```json
-{
-  "step": "testcase-generator",
-  "status": "COMPLETED",
-  "outputFile": "<SESSION_ID>/02_testcase.md",
-  "completedAt": "<ISO timestamp>"
-}
-```
-Ghi `lastCompletedStep: "testcase-generator"`. Cập nhật `outputs.testcaseFile`. Cập nhật REGISTRY.json. **KHÔNG ghi vào config chung.**
