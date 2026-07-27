@@ -1,0 +1,124 @@
+{
+  "_readme": "File cấu hình xác thực SSO. Sao chép thành sso-config.json và điền thông tin thực tế. KHÔNG commit file thực tế lên git.",
+  "_supportedTypes": ["form", "oauth2-pkce", "azure-ad", "keycloak", "saml2", "custom-jwt"],
+  "loginType": "form",
+
+  "formLogin": {
+    "_note": "Dùng khi ứng dụng có trang login riêng với username/password input",
+    "loginUrl": "/login",
+    "usernameField": {
+      "selector": "input[name='username']",
+      "alternativeSelectors": ["#username", "input[type='email']", "[data-testid='username-input']"]
+    },
+    "passwordField": {
+      "selector": "input[name='password']",
+      "alternativeSelectors": ["#password", "input[type='password']"]
+    },
+    "submitButton": {
+      "selector": "button[type='submit']",
+      "alternativeSelectors": ["button:has-text('Đăng nhập')", "button:has-text('Login')", "#login-btn"]
+    },
+    "successIndicators": [
+      "text=Dashboard",
+      "text=Trang chủ",
+      "url:contains('/dashboard')",
+      "url:contains('/home')"
+    ],
+    "errorIndicators": [
+      "text=Sai tên đăng nhập hoặc mật khẩu",
+      "text=Invalid credentials",
+      ".error-message"
+    ]
+  },
+
+  "oauth2Pkce": {
+    "_note": "Dùng khi ứng dụng dùng OAuth2 Authorization Code + PKCE (Google, GitHub...)",
+    "clientId": "YOUR_CLIENT_ID",
+    "authorizationEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenEndpoint": "https://oauth2.googleapis.com/token",
+    "redirectUri": "http://localhost:3000/callback",
+    "scopes": ["openid", "profile", "email"],
+    "providerType": "google",
+    "mockOAuthFlow": true,
+    "mockTokenResponse": {
+      "_note": "Dùng để mock token trong test, tránh phụ thuộc OAuth provider thực"
+    }
+  },
+
+  "azureAd": {
+    "_note": "Dùng khi ứng dụng tích hợp Azure Active Directory / Microsoft Entra ID",
+    "tenantId": "YOUR_TENANT_ID",
+    "clientId": "YOUR_CLIENT_ID",
+    "clientSecret": "YOUR_CLIENT_SECRET",
+    "authority": "https://login.microsoftonline.com/YOUR_TENANT_ID",
+    "scopes": ["openid", "profile", "email", "User.Read"],
+    "redirectUri": "http://localhost:3000/auth/callback",
+    "useROPC": true,
+    "ropEndpoint": "https://login.microsoftonline.com/YOUR_TENANT_ID/oauth2/v2.0/token",
+    "_note_ropc": "Resource Owner Password Credentials flow — chỉ dùng cho test, không dùng cho production. Cho phép đăng nhập trực tiếp bằng username/password mà không cần redirect."
+  },
+
+  "keycloak": {
+    "_note": "Dùng khi ứng dụng dùng Keycloak IAM",
+    "serverUrl": "http://keycloak.your-company.com",
+    "realm": "your-realm",
+    "clientId": "your-client-id",
+    "clientSecret": "YOUR_CLIENT_SECRET",
+    "tokenEndpoint": "http://keycloak.your-company.com/realms/your-realm/protocol/openid-connect/token",
+    "grantType": "password",
+    "useDirectGrant": true,
+    "_note_direct": "Direct Access Grant (Resource Owner Password) — phải bật trong Keycloak client settings cho test environment."
+  },
+
+  "saml2": {
+    "_note": "Dùng khi ứng dụng tích hợp SAML 2.0 (Okta, PingFederate...)",
+    "idpSsoUrl": "https://your-idp.okta.com/app/your-app/sso/saml",
+    "entityId": "https://your-app.com/saml/metadata",
+    "spAssertionConsumerServiceUrl": "https://your-app.com/saml/acs",
+    "mockSamlAssertion": true,
+    "_note_mock": "Trong test môi trường, nên mock SAML assertion thay vì redirect thật đến IdP."
+  },
+
+  "customJwt": {
+    "_note": "Dùng khi API backend cấp JWT trực tiếp qua endpoint /auth/login",
+    "loginApiEndpoint": "http://localhost:8080/api/auth/login",
+    "tokenResponseField": "accessToken",
+    "refreshTokenField": "refreshToken",
+    "tokenExpiryField": "expiresIn",
+    "injectToken": {
+      "headerName": "Authorization",
+      "prefix": "Bearer "
+    },
+    "storeInLocalStorage": {
+      "key": "auth_token"
+    }
+  },
+
+  "playwrightStorageState": {
+    "_note": "Playwright dùng Storage State để lưu lại cookies và localStorage sau khi đăng nhập. Mỗi role có 1 file .json riêng. Test sau đó load file này thay vì login lại.",
+    "storageDir": "e2e/.auth/",
+    "format": "json",
+    "includesCookies": true,
+    "includesLocalStorage": true,
+    "includesSessionStorage": false,
+    "reuseAcrossTests": true,
+    "globalSetupRefreshesAuth": true
+  },
+
+  "testEnvironmentOverrides": {
+    "_note": "Ghi đè cấu hình khi chạy ở các môi trường khác nhau",
+    "local": {
+      "baseUrl": "http://localhost:3000",
+      "skipSslVerification": false
+    },
+    "staging": {
+      "baseUrl": "https://staging.your-app.com",
+      "skipSslVerification": false
+    },
+    "ci": {
+      "baseUrl": "http://localhost:3000",
+      "headless": true,
+      "skipSslVerification": true
+    }
+  }
+}

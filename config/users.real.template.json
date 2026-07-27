@@ -1,0 +1,69 @@
+{
+  "description": "Cấu hình tài khoản test theo đúng Mã vai trò (Role Code) được định nghĩa trong ma trận phân quyền hệ thống FTMS / FTI-AM và các hệ thống doanh nghiệp.",
+  "_readme": "File này quản lý tất cả tài khoản test và phân role rõ ràng. Playwright auth.setup.ts sẽ đọc file này để sinh storageState (.auth/<role>.json) cho từng role, hỗ trợ chuyển đổi tài khoản (User Switching) mượt mà trong test cases.",
+  "users": {
+    "salesman": {
+      "username": "TuanHP3",
+      "email": "tuanhp3@fpt.com",
+      "matran_role_code": "FTI-SAL SALESMAN",
+      "matran_role_name": "Nhân viên kinh doanh FTI",
+      "description": "Người tạo yêu cầu, gửi phiếu yêu cầu, upload file đã ký với KH, hủy/đóng/gửi lại yêu cầu."
+    },
+    "sales_leader": {
+      "username": "salcenterman2am",
+      "email": "salcenterman2am@fpt.com",
+      "matran_role_code": "FTI-SAL CENTER MANAGER",
+      "matran_role_name": "Giám đốc TTKD",
+      "description": "Xem xét rủi ro, phê duyệt rủi ro của TTKD, nhận xét/comment."
+    },
+    "legal_assignor": {
+      "username": "binhnd31",
+      "email": "binhnd31@fpt.com",
+      "matran_role_code": "FTI.LEGAL.MAN",
+      "matran_role_name": "Trưởng BP Pháp chế",
+      "description": "Tiếp nhận yêu cầu, gán ĐVCM, chỉnh sửa nội dung tài liệu, đánh giá rủi ro, Hoàn tất review."
+    },
+    "legal_reviewer": {
+      "username": "TrangLTH52",
+      "email": "tranglth52@fpt.com",
+      "matran_role_code": "FTI.LEGAL",
+      "matran_role_name": "Pháp chế",
+      "description": "Tiếp nhận yêu cầu, gán ĐVCM, chỉnh sửa nội dung tài liệu, nhận xét, đánh giá rủi ro, Hoàn tất review."
+    },
+    "finance_expert": {
+      "username": "VyNTT30",
+      "email": "vyntt30@fpt.com",
+      "matran_role_code": "FTI-FA STAFF",
+      "matran_role_name": "Kế toán / Tài chính",
+      "description": "Nhận phân công làm ĐVCM Tài chính, review và phản hồi ý kiến chuyên môn."
+    },
+    "technical_expert": {
+      "username": "CuongTX2",
+      "email": "cuongtx2@fpt.com",
+      "matran_role_code": "FTI-TEC MANAGER",
+      "matran_role_name": "Trưởng BP Kỹ thuật",
+      "description": "Nhận phân công làm ĐVCM Kỹ thuật, review và phản hồi ý kiến chuyên môn."
+    },
+    "security_expert": {
+      "username": "Ductn3",
+      "email": "ductn3@fpt.com",
+      "matran_role_code": "FTI-QUA-QA MAN",
+      "matran_role_name": "Nhân viên đảm bảo chất lượng / ATTT",
+      "description": "Nhận phân công làm ĐVCM An toàn thông tin/QA, review và phản hồi ý kiến."
+    },
+    "deputy_signer": {
+      "username": "thonghm7",
+      "email": "thonghm7@fpt.com",
+      "matran_role_code": "FTI-CMG PRESIDENT",
+      "matran_role_name": "Ban điều hành / Người ký duyệt",
+      "description": "Xem xét và phê duyệt rủi ro cấp cao, đại diện ký duyệt."
+    },
+    "system_admin": {
+      "username": "longht17",
+      "email": "longht17@fpt.com",
+      "matran_role_code": "FTIAM.ADMIN",
+      "matran_role_name": "Nhóm quyền Admin hệ thống",
+      "description": "Toàn quyền quản trị hệ thống."
+    }
+  }
+}

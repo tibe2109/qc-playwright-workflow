@@ -1,0 +1,19 @@
+{
+  "_description": "Template SESSION_CONTEXT.json — Sao chép file này khi tạo session mới. AI Agent sẽ tự động tạo file này trong thư mục <sessionRegistryDir>/<SESSION_ID>/",
+  "sessionId": "SES_<YYYYMMDD>_<HHmmss>_<FEATURE_ID>",
+  "featureId": "",
+  "featureName": "",
+  "projectName": "",
+  "createdAt": "<ISO timestamp>",
+  "lastUpdatedAt": "<ISO timestamp>",
+  "lastCompletedStep": "",
+  "sessionDir": "<sessionRegistryDir>/<SESSION_ID>/",
+  "steps": [],
+  "outputs": {
+    "qcSpecFile": "",
+    "testcaseFile": "",
+    "specFiles": [],
+    "pomFiles": [],
+    "bugReports": []
+  }
+}

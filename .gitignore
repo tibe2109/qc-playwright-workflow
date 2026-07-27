@@ -1,0 +1,22 @@
+# .gitignore cho dự án dùng AI QC Playwright Pipeline
+
+# === AUTH & CREDENTIALS ===
+e2e/.auth/
+config/auth-roles.json
+config/sso-config.json
+
+# === PLAYWRIGHT RUNTIME ===
+playwright-report/
+test-results/
+*.zip
+
+# === QC SESSIONS (RUNTIME) ===
+docs/qc-sessions/*/
+sessions/*/
+
+# === LOCK FILES ===
+docs/qc-specs/.locks/
+**/.locks/
+
+# === NODE ===
+node_modules/

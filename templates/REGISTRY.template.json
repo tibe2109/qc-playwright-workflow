@@ -1,0 +1,20 @@
+{
+  "_description": "Template REGISTRY.json — File này được tạo tự động trong <sessionRegistryDir>/REGISTRY.json. Chỉ cập nhật theo cơ chế APPEND (thêm mới entry, KHÔNG bao giờ ghi đè toàn bộ file).",
+  "_protocol": "APPEND-ONLY",
+  "lastUpdated": "<ISO timestamp>",
+  "activeSessions": [
+    {
+      "_example": "Đây là ví dụ — xóa block này khi dùng thực tế",
+      "sessionId": "SES_20260727_143000_ORDER",
+      "featureId": "ORDER",
+      "featureName": "Tạo đơn hàng",
+      "projectName": "My Project",
+      "status": "RUNNING",
+      "currentStep": "testcase-generator",
+      "startedAt": "2026-07-27T14:30:00Z",
+      "lastUpdatedAt": "2026-07-27T14:32:00Z",
+      "sessionDir": "<sessionRegistryDir>/SES_20260727_143000_ORDER/"
+    }
+  ],
+  "completedSessions": []
+}

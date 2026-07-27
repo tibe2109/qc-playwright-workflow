@@ -1,0 +1,50 @@
+{
+  "_readme": "File cấu hình chính của AI QC Playwright Pipeline. Đặt isDefaultLocked=false để AI tự hỏi bạn các đường dẫn khi chạy lần đầu. Đặt true để khóa cấu hình và dùng trực tiếp.",
+  "projectName": "YOUR_PROJECT_NAME",
+  "projectDescription": "Mô tả ngắn về dự án của bạn",
+  "isDefaultLocked": false,
+  "paths": {
+    "_note": "Tất cả đường dẫn là RELATIVE so với projectRoot. Nếu isDefaultLocked=false, AI sẽ tự hỏi bạn điền vào.",
+    "projectRoot": "/ABSOLUTE/PATH/TO/YOUR/PROJECT/",
+    "urdSourceDir": "docs/requirements/",
+    "qcVaultDir": "docs/qc-specs/",
+    "qcBusinessDictionary": "docs/qc-specs/00_BUSINESS_DICTIONARY.md",
+    "testcaseOutputDir": "docs/testcases/",
+    "e2eRootDir": "e2e/",
+    "e2ePagesDir": "e2e/pages/",
+    "e2eFeaturesDir": "e2e/features/",
+    "bugReportDir": "docs/bugs/",
+    "authRolesConfig": "e2e/config/auth-roles.json",
+    "sessionRegistryDir": "docs/qc-sessions/",
+    "sessionRegistry": "docs/qc-sessions/REGISTRY.json",
+    "kbLockDir": "docs/qc-specs/.locks/",
+    "kbLogsDir": "docs/qc-specs/logs/"
+  },
+  "testRunner": {
+    "maxSuiteReruns": 5,
+    "maxSelfHealPerFile": 3,
+    "browser": "chromium",
+    "mode": "real",
+    "baseUrl": "http://localhost:3000",
+    "headless": true,
+    "timeout": 30000
+  },
+  "concurrency": {
+    "kbLockTimeoutSeconds": 60,
+    "kbLockRetryIntervalSeconds": 5,
+    "sessionIdFormat": "SES_<YYYYMMDD_HHmmss>_<FEATURE_ID>",
+    "maxConcurrentAgents": 10,
+    "note": "Mỗi AI Agent phải tự sinh SESSION_ID duy nhất và làm việc trong thư mục riêng biệt. KHÔNG ghi trạng thái session vào file config chung này."
+  },
+  "onboarding": {
+    "requiredPaths": ["projectRoot", "urdSourceDir", "e2eRootDir", "authRolesConfig"],
+    "optionalPaths": ["qcVaultDir", "testcaseOutputDir", "bugReportDir"],
+    "questions": {
+      "projectRoot": "Đường dẫn tuyệt đối đến thư mục gốc dự án của bạn là gì? (ví dụ: /home/user/projects/my-app)",
+      "urdSourceDir": "Thư mục chứa tài liệu yêu cầu (URD/BRD/User Story) nằm ở đâu? (tương đối với projectRoot)",
+      "e2eRootDir": "Thư mục e2e test của dự án (nơi playwright.config.ts đặt) nằm ở đâu?",
+      "authRolesConfig": "File cấu hình tài khoản test (auth-roles.json) sẽ đặt ở đâu?",
+      "baseUrl": "URL của ứng dụng khi chạy test (ví dụ: http://localhost:3000 hoặc https://staging.your-app.com)?"
+    }
+  }
+}

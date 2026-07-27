@@ -1,0 +1,116 @@
+{
+  "_readme": "File cấu hình tài khoản test. Sao chép file này thành auth-roles.json và điền thông tin thực tế. KHÔNG commit file auth-roles.json lên git (thêm vào .gitignore).",
+  "_version": "2.0",
+  "_notes": [
+    "storageStateFile: Đường dẫn file Playwright sẽ lưu cookie/token sau khi đăng nhập. Playwright dùng file này để bỏ qua bước login trong các test.",
+    "loginUrl: URL trang đăng nhập của ứng dụng (nếu khác baseUrl).",
+    "loginType: Loại đăng nhập - 'form' (username+password thông thường), 'sso' (redirect qua SSO provider), 'oauth2', 'azure-ad', 'keycloak'.",
+    "customLoginSteps: Nếu loginType='form', mô tả selector của các trường input để AI sinh code login chính xác."
+  ],
+  "globalSetup": {
+    "baseUrl": "http://localhost:3000",
+    "loginUrl": "http://localhost:3000/login",
+    "loginType": "form",
+    "ssoConfigFile": "e2e/config/sso-config.json",
+    "authStorageDir": "e2e/.auth/",
+    "globalSetupScript": "e2e/global-setup.ts"
+  },
+  "roles": [
+    {
+      "roleId": "ADMIN",
+      "displayName": "Quản trị viên hệ thống",
+      "description": "Có toàn quyền truy cập mọi chức năng",
+      "username": "admin@yourcompany.com",
+      "password": "YOUR_ADMIN_PASSWORD",
+      "storageStateFile": "e2e/.auth/admin.json",
+      "loginType": "form",
+      "customLoginSteps": {
+        "usernameSelector": "input[name='username']",
+        "passwordSelector": "input[name='password']",
+        "submitSelector": "button[type='submit']",
+        "successIndicator": "text=Dashboard"
+      },
+      "permissions": ["all"],
+      "testTags": ["@admin", "@full-access"]
+    },
+    {
+      "roleId": "MANAGER",
+      "displayName": "Quản lý",
+      "description": "Có quyền xem, duyệt, phân công nhưng không xóa",
+      "username": "manager@yourcompany.com",
+      "password": "YOUR_MANAGER_PASSWORD",
+      "storageStateFile": "e2e/.auth/manager.json",
+      "loginType": "form",
+      "customLoginSteps": {
+        "usernameSelector": "input[name='username']",
+        "passwordSelector": "input[name='password']",
+        "submitSelector": "button[type='submit']",
+        "successIndicator": "text=Dashboard"
+      },
+      "permissions": ["read", "approve", "assign"],
+      "testTags": ["@manager"]
+    },
+    {
+      "roleId": "STAFF",
+      "displayName": "Nhân viên",
+      "description": "Có quyền tạo mới và chỉnh sửa dữ liệu của mình",
+      "username": "staff@yourcompany.com",
+      "password": "YOUR_STAFF_PASSWORD",
+      "storageStateFile": "e2e/.auth/staff.json",
+      "loginType": "form",
+      "customLoginSteps": {
+        "usernameSelector": "input[name='username']",
+        "passwordSelector": "input[name='password']",
+        "submitSelector": "button[type='submit']",
+        "successIndicator": "text=Dashboard"
+      },
+      "permissions": ["create", "read", "update-own"],
+      "testTags": ["@staff"]
+    },
+    {
+      "roleId": "VIEWER",
+      "displayName": "Người xem",
+      "description": "Chỉ có quyền xem, không thao tác",
+      "username": "viewer@yourcompany.com",
+      "password": "YOUR_VIEWER_PASSWORD",
+      "storageStateFile": "e2e/.auth/viewer.json",
+      "loginType": "form",
+      "customLoginSteps": {
+        "usernameSelector": "input[name='username']",
+        "passwordSelector": "input[name='password']",
+        "submitSelector": "button[type='submit']",
+        "successIndicator": "text=Dashboard"
+      },
+      "permissions": ["read-only"],
+      "testTags": ["@viewer", "@read-only"]
+    },
+    {
+      "_comment": "Thêm role mới bằng cách copy block trên và thay đổi thông tin",
+      "roleId": "CUSTOM_ROLE",
+      "displayName": "Role tùy chỉnh",
+      "description": "Mô tả role này",
+      "username": "custom@yourcompany.com",
+      "password": "YOUR_PASSWORD",
+      "storageStateFile": "e2e/.auth/custom.json",
+      "loginType": "form",
+      "customLoginSteps": {
+        "usernameSelector": "input[name='username']",
+        "passwordSelector": "input[name='password']",
+        "submitSelector": "button[type='submit']",
+        "successIndicator": "text=Dashboard"
+      },
+      "permissions": ["read", "create"],
+      "testTags": ["@custom"]
+    }
+  ],
+  "rbacMatrix": {
+    "_note": "Ma trận phân quyền — dùng để AI sinh testcase bảo mật chính xác hơn. true = có quyền, false = không có quyền",
+    "features": {
+      "CREATE_ORDER": { "ADMIN": true, "MANAGER": true, "STAFF": true, "VIEWER": false },
+      "APPROVE_ORDER": { "ADMIN": true, "MANAGER": true, "STAFF": false, "VIEWER": false },
+      "DELETE_ORDER": { "ADMIN": true, "MANAGER": false, "STAFF": false, "VIEWER": false },
+      "VIEW_REPORTS": { "ADMIN": true, "MANAGER": true, "STAFF": false, "VIEWER": true },
+      "MANAGE_USERS": { "ADMIN": true, "MANAGER": false, "STAFF": false, "VIEWER": false }
+    }
+  }
+}
