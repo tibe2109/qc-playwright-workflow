@@ -1,68 +1,50 @@
 ---
 name: ai-testcase-generator
-description: "Skill chuyên biệt sinh bộ Testcase Markdown từ QC Spec (v2.8). NGHIÊM CẤM RÚT GỌN NÉN CHUỖI, ĐẢM BẢO 100% TESTCASE ĐẦY ĐỦ 4 PHẦN CHI TIẾT (Data Payload, Bước 1..N chi tiết, Expected DB/UI) NHƯ BAN ĐẦU."
+description: "Skill chuyên biệt sinh bộ Testcase Markdown từ QC Spec (v2.9). TỰ ĐỘNG ĐỌC VÀ ĐỐI CHIẾU FILE TESTCASE HIỆN TẠI ĐỂ KHAI THÁC NGÓC NGÁCH NGHIỆP VỤ (Deep Penetration Edge Cases), CHỐNG TRÙNG LẶP VÀ CHỐNG XUNG ĐỘT KẾT QUẢ MONG ĐỢI 100%."
 ---
 
-# 🧪 AI Testcase Generator — Strict Full-Detail Quality Contract (v2.8)
+# 🧪 AI Testcase Generator — Continuous Deep Expansion & Deduplication Engine (v2.9)
 
-Skill này bóc tách bộ testcase chuyên sâu từ bản QC Spec. **CAM KẾT 100% TẤT CẢ TESTCASE (TỪ TC 1 ĐẾN TC N) ĐỀU GIỮ NGUYÊN ĐỘ CHI TIẾT ĐẦY ĐỦ 4 PHẦN, TUYỆT ĐỐI KHÔNG NÉN THÀNH 1 DÒNG HAY BỎ BỚT MỤC.**
+Skill này bóc tách và mở rộng bộ testcase chuyên sâu từ bản QC Spec. **CAM KẾT ĐỌC TỰ ĐỘNG QC SPEC THEO SESSION, TỰ ĐỘNG ĐỐI CHIẾU DỮ LIỆU ĐÃ CÓ ĐỂ KHAI THÁC MỌI NGÓC NGÁCH NGHIỆP VỤ, CHỐNG TRÙNG LẶP VÀ CHỐNG XUNG ĐỘT KẾT QUẢ MONG ĐỢI 100%.**
 
 ---
 
-## 🚫 QUY TẮC THÉP NGUYÊN TẮC CHẤT LƯỢNG (STRICT NO-COMPRESSION CONTRACT)
+## 🔍 GIAO THỨC BỔ SUNG NGÓC NGÁCH NGHIỆP VỤ & CHỐNG TRÙNG LẶP (DEEP EXPANSION & DEDUPLICATION PROTOCOL)
 
-> [!CAUTION]
-> **CẤM TỰ Ý RÚT GỌN HOẶC NÉN NỘI DUNG TESTCASE:**
-> Khi sinh số lượng lớn testcases (20 - 80+ testcases), AI Agent **TUYỆT ĐỐI KHÔNG DÙNG CƠ CHẾ NÉN NỘI DUNG** (như gộp bước thành `Tab 1: KH, Tab 2: Tìm KH...` hoặc bỏ mục `Điều Kiện/ Dữ Liệu Test`).
+Khi được yêu cầu tạo mới hoặc bổ sung testcase cho một Session (`SESSION_ID`), AI Agent **BẮT BUỘC** thực thi 4 bước kiểm soát nghiêm ngặt sau:
 
-### ❌ CÁC HÀNH VI VI PHẠM (STRICTLY FORBIDDEN):
-1. ❌ Gộp các bước thực hiện thành 1 dòng duy nhất.
-2. ❌ Bỏ qua mục `Mức Độ Ưu Tiên` hoặc `Điều Kiện/ Dữ Liệu Test`.
-3. ❌ Viết `Kết Quả Mong Đợi` chung chung 1 câu không có HTTP Code hay DB Table.
-
-### ✅ CẤU TRÚC BẮT BUỘC 100% CHI TIẾT CHO MỌI TESTCASE:
-
-Tất cả các testcase (dù ở vị trí nào) **BẮT BUỘC** tuân thủ cấu trúc 4 phần đầy đủ sau:
-
-```markdown
-### TC_P1.1: Tạo Yêu Cầu Hợp Đồng Khách Hàng — KH Tồn Tại Trên CM — Review Theo Template KH
-
-- **Mức Độ Ưu Tiên:** High
-- **Trụ cột Quality Matrix:** P1 (Primary Functional Flow)
-- **Điều Kiện/ Dữ Liệu Test:**
-  * Account đăng nhập: Role Sale / Người tạo (`longht17@fpt.com`).
-  * Đường dẫn màn hình: `/am/review-request/create` (Tab 1 & Tab 2).
-  * Dữ liệu test mẫu:
-    - Loại đối tác: `Khách hàng` (PartnerType = 1).
-    - Loại văn bản: `Hợp đồng` (DocType = 1).
-    - Khách hàng CM: `FTI124414` (WINCOMMERCE).
-    - Nhóm dịch vụ: `1000` (Kênh thuê riêng & Internet).
-    - Loại dịch vụ: `1001` (Dịch vụ SSL).
-    - Giá trị hợp đồng: `50,000,000` VNĐ.
-    - File Template chọn: `FileEntryId = 11668`.
-
-- **Các Bước Thực Hiện:**
-  1. Đăng nhập hệ thống FTI-AM qua SSO OTP Test mode (`longht17@fpt.com` / `ISC22QC`).
-  2. Truy cập màn hình Tạo yêu cầu review tại link `/am/review-request/create`.
-  3. Tại Tab 1: Chọn Loại đối tác = "Khách hàng", Loại văn bản = "Hợp đồng". Nhấn nút "Tiếp tục".
-  4. Tại Tab 2: Nhập Tên yêu cầu = "Yêu cầu review HĐ Dịch vụ SSL WinCommerce 2026".
-  5. Nhập keyword tìm kiếm KH = "FTI124414" và chọn khách hàng từ danh sách gợi ý CM.
-  6. Nhập Giá trị hợp đồng = "50000000". Chọn Nhóm dịch vụ = "Kênh thuê riêng & Internet", Loại dịch vụ = "Dịch vụ SSL".
-  7. Chọn Loại yêu cầu review = "Theo template". Click chọn Template = "Biểu mẫu HĐ Khách hàng SSL" (FileEntryId = 11668).
-  8. Thêm 1 tài liệu đính kèm tham khảo (file `.pdf` max 5MB).
-  9. Click nút "Tạo mới". Hệ thống hiển thị popup xác nhận -> Click "Xác nhận".
-
-- **Kết Quả Mong Đợi:**
-  * Tạo mới phiếu yêu cầu thành công, API trả về `HTTP 200 OK` với Ticket ID > 0.
-  * Hệ thống tự động chuyển hướng sang màn hình Chi tiết yêu cầu vừa tạo.
-  * Trạng thái phiếu hiển thị: `Tạo mới`.
-  * Toàn bộ thông tin Tab 1, Tab 2, Nhóm/Loại dịch vụ, Khách hàng CM và File Template `11668` lưu chính xác trong DB `CTI.CTRTICKET`.
+```mermaid
+graph TD
+    SPEC["📄 1. Đọc QC Spec của Session:<br/>01_QC_SPEC_*.md"] --> MAP["🗺️ Trích xuất State Machine, Boundary Matrix,<br/>RBAC Matrix, Risk Matrix"]
+    READ_TC["📋 2. Đọc file 02_testcase.md hiện tại"] --> EXIST["Fingerprint Registry:<br/>Lập danh sách các (Payload + Action + Expected) đã có"]
+    MAP & EXIST --> DIFF["🔍 3. So sánh khoảng trống (Gap Analysis):<br/>Tìm các ngóc ngách nghiệp vụ chưa được kiểm thử"]
+    DIFF --> GEN["✍️ 4. Sinh Testcase Mới:<br/>- Khai thác sâu ngóc ngách<br/>- CHỐNG TRÙNG LẶP 100%<br/>- CHỐNG XUNG ĐỘT EXPECTED RESULT 100%"]
 ```
 
 ---
 
-## ⚡ CƠ CHẾ SINH NỐI TIẾP THEO BATCH DÀNH CHO TESTCASE SỐ LƯỢNG LỚN (AUTO BATCH GENERATION)
+### 1. 📖 Tự Động Đọc Và Nạp Tri Thức QC Spec Theo Session (`01_QC_SPEC_*.md`):
+- AI Agent tự động đọc file `<SESSION_ID>/01_QC_SPEC_*.md`.
+- Nạp State Machine, Field Validation, RBAC Matrix, Risk Matrix.
 
-1. AI Agent sinh theo đợt **10 - 15 Testcases / Batch**.
-2. Nối tiếp dữ liệu đầy đủ vào file `<SESSION_ID>/02_testcase.md`.
-3. Giữ độ chi tiết 100% từ TC 1 đến TC N.
+---
+
+### 2. 📋 Đọc File Testcase Hiện Tại (`02_testcase.md`) & Lập Fingerprint Registry:
+- Trích xuất danh sách `(Mã TC | Role | Action Input Payload | Expected Result State)` của tất cả testcase đã tồn tại để tránh trùng lặp.
+
+---
+
+### 3. 🔍 Khai Thác Sâu Các Ngóc Ngách Nghiệp Vụ Chưa Phủ (Deep Penetration Edge Cases):
+- **Tổ hợp chéo rủi ro cao**: Phụ lục + Docx lỗi font + KH CM ngưng hoạt động + Nhóm dịch vụ không hỗ trợ template + Account bị lock...
+- **Thao tác dị biệt (Adversarial Actions)**: Double click 50ms, IDOR URL modification, Max payload 100MB, Network disconnect...
+
+---
+
+### 4. 🛡️ CHỐNG TRÙNG LẶP & CHỐNG XUNG ĐỘT KẾT QUẢ MONG ĐỢI 100%:
+- **Zero Duplication**: Không trùng lặp cặp `(Input Payload + Action Steps)`.
+- **Expected State Harmony**: Tuân thủ 100% State Machine trong QC Spec. Không có xung đột giữa TC mới và TC cũ.
+
+---
+
+## 🚫 CẤU TRÚC 100% CHI TIẾT ĐẦY ĐỦ 4 PHẦN (STRICT NO-COMPRESSION v2.9)
+Tất cả các testcase bổ sung **BẮT BUỘC** giữ nguyên độ chi tiết 4 phần như ban đầu (Ưu tiên, Điều kiện/Data payload, Các bước 1..N chi tiết, Expected Result DB/API).
