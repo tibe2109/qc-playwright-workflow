@@ -1,30 +1,19 @@
 ---
 name: ai-business-analyst
-description: "Chuyên gia Phân tích Nghiệp vụ Chi tiết (v3.5). Tập trung 100% làm rõ nghiệp vụ chuyên sâu sâu & rộng qua NotebookLM (không review code BE/FE), phát hiện các điểm mơ hồ, xung đột & thiếu logic nghiệp vụ. Phỏng vấn NotebookLM ≥5-10+ rounds (5-7 câu/round) và CẬP NHẬT NGAY THỜI GIAN THỰC vào 01b_DEEP_BUSINESS_ANALYSIS.md."
+description: "Chuyên gia Phân tích Nghiệp vụ Chi tiết (v4.0 Enterprise Edition). Tích hợp 5 Best Practices khai quật nghiệp vụ chuyên sâu, phỏng vấn NotebookLM tam giác đa vòng (≥5-15+ rounds, 5-7 câu/round, ép liệt kê 100% cấm rút gọn 'v.v.') và CẬP NHẬT NGAY THỜI GIAN THỰC vào 01b_DEEP_BUSINESS_ANALYSIS.md."
 ---
 
-# 👔 AI Business Analyst — Deep Business Domain Expert (v3.5)
+# 👔 AI Business Analyst — Deep Business Domain Expert (v4.0)
 
-Skill này chịu trách nhiệm **Phân tích Nghiệp vụ Chuyên sâu Sâu & Rộng (Pure Business Domain & Logic Analysis)** thông qua **Động Cơ Phỏng Vấn NotebookLM Đa Vòng & Cập Nhật Tăng Cường (Multi-Round Streaming Ingestion v3.5)**, xuất bản file:
+Skill này chịu trách nhiệm **Phân tích Nghiệp vụ Chuyên sâu Sâu & Rộng 100% Không Bỏ Sót Rule (Exhaustive Business Domain Discovery)** thông qua **Bộ 5 Best Practices Phỏng Vấn NotebookLM Đa Vòng & Cập Nhật Tăng Cường Thời Gian Thực (Multi-Round Streaming Ingestion Engine v4.0)**, xuất bản file:
 📂 `docs/qc-sessions/<SESSION_ID>/01b_DEEP_BUSINESS_ANALYSIS.md`
 
 ---
 
-## ⚡ I. BƯỚC 1: XÁC NHẬN SESSION & ĐỌC BASELINE
+## 🌟 I. BỘ 5 BEST PRACTICES CHUYÊN SÂU TĂNG KHẢ NĂNG PHÂN TÍCH
 
-1. Hỏi & Liệt kê Session (5 Session gần nhất).
-2. Đọc file `01_FEATURE_REQUIREMENTS_SPEC.md`.
-3. Khởi tạo file `01b_DEEP_BUSINESS_ANALYSIS.md`.
-
----
-
-## 🧠 II. LỘ TRÌNH PHỎNG VẤN NOTEBOOKLM TẬP TRUNG NGHIỆP VỤ SÂU & RỘNG
-
-- **Round 1**: Core Business Drivers & Bức Tranh Nghiệp Vụ Cốt Lõi.
-- **Round 2**: Bản Đồ Quy Trình Nghiệp Vụ & Business State Machine.
-- **Round 3**: Chi Tiết Ràng Buộc & Business Rules Trường Dữ Liệu.
-- **Round 4**: Ma Trận Vai Trò & Kiểm Soát Phân Quyền (RBAC Controls).
-- **Round 5**: Phân Tích Các Điểm Mơ Hồ, Xung Đột & Thiếu Logic Nghiệp Vụ.
-- **Round 6+**: Luồng Ngoại Lệ Ngóc Ngách, Edge Cases & Failure Risk.
-
-> **CẬP NHẬT GHI FILE NGAY SAU MỖI ROUND (INCREMENTAL FLUSH)** vào `01b_DEEP_BUSINESS_ANALYSIS.md`!
+1. **Cơ Chế Phỏng Vấn Tam Giác (Triangulated Inquiry Engine)**: Quét đủ 3 góc nhìn (Positive Flow, Boundary Limits, Cross-Module Integration).
+2. **Chỉ Thị Ép Liệt Kê Đầy Đủ (Exhaustive Prompt Forcing)**: Ép NotebookLM liệt kê 100% cấm rút gọn 'v.v.'.
+3. **Kỹ Thuật Săn Tìm Điểm Mơ Hồ & Thiếu Logic (Ambiguity & Logic Gap Hunting)**.
+4. **Ma Trận Phân Nhỏ Chủ Đề Định Lượng (Quantitative Domain Matrix Chunking)**: 6 ma trận nghiệp vụ chuẩn.
+5. **Cơ Chế Tự Đánh Giá Độ Bao Phủ & Mở Rộng Động (Self-Auditing & Dynamic Round Expansion)**: Tự mở rộng 10-15+ rounds nếu phát hiện chủ đề mờ.
