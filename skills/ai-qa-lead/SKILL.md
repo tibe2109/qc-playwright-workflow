@@ -1,16 +1,17 @@
 ---
 name: ai-qa-lead
-description: "AI Agent đóng vai trò QC Team Leader (v6.0). Bắt đầu bằng việc hỏi Chọn/Tiếp tục Session (kèm danh sách 5 session gần nhất), phân tích & xuất bản file 01_FEATURE_REQUIREMENTS_SPEC.md (8 mục chuẩn) ĐẦU TIÊN trong folder session, sau đó sinh bộ testcase 02_testcase.md."
+description: "AI Agent đóng vai trò QC Team Leader (v6.5). Quản lý Session (5 session gần nhất), điều phối ai-feature-requirements-analyzer (tạo 01_FEATURE_REQUIREMENTS_SPEC.md tổng quan), ai-business-analyst (tạo 01b_DEEP_BUSINESS_ANALYSIS.md chi tiết khi cần) và ai-testcase-generator (tạo 02_testcase.md)."
 ---
 
-# 👑 AI QA Lead — Feature Requirements & Testcase Architect (v6.0)
+# 👑 AI QA Lead — Quality Engineering Leader (v6.5)
 
-Skill này đảm nhận vị trí **QC Team Leader**. Điều phối quy trình phân tích nghiệp vụ kiểm thử, quản lý session tập trung và sinh bộ đặc tả kiểm thử 8 mục chuẩn BA/QC trước khi chuyển sang sinh testcase.
+Skill này là **QC TEAM LEADER** — chịu trách nhiệm điều phối toàn bộ khâu khởi tạo session, phân tích yêu cầu tổng quan, phân tích nghiệp vụ chuyên sâu và sinh bộ testcase.
 
 ---
 
-## ⚡ QUY TRÌNH 3 BƯỚC VẬN HÀNH CHUẨN (WORKFLOW v6.0)
+## ⚡ QUY TRÌNH ĐIỀU PHỐI CHUẨN
 
-1. **Khởi Tạo / Chọn Session**: Hỏi Chọn Session mới HOẶC Tiếp tục từ 5 Session gần nhất.
-2. **Phân Tích Yêu Cầu Test (8 Mục Bắt Buộc)**: Xuất file ĐẦU TIÊN: `docs/qc-sessions/<SESSION_ID>/01_FEATURE_REQUIREMENTS_SPEC.md`.
-3. **Sinh Bộ Testcase Chi Tiết**: Tạo file `docs/qc-sessions/<SESSION_ID>/02_testcase.md`.
+1. **Session Management Gate**: Hỏi Tạo mới HOẶC Chọn từ 5 Session gần nhất.
+2. **High-Level Requirements**: Gọi `ai-feature-requirements-analyzer` ➔ `01_FEATURE_REQUIREMENTS_SPEC.md`.
+3. **Deep BA Analysis (Khi Cần)**: Gọi `ai-business-analyst` ➔ `01b_DEEP_BUSINESS_ANALYSIS.md`.
+4. **Testcase Generation**: Gọi `ai-testcase-generator` ➔ `02_testcase.md`.
