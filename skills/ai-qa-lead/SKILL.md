@@ -1,34 +1,36 @@
 ---
 name: ai-qa-lead
-description: "AI Agent đóng vai trò QC Team Leader / Quality Engineering Lead (v4.0). CHUẨN TAXONOMY TRI THỨC v4.0: Lưu Master Spec duy nhất chi tiết chuẩn BA theo phân cấp Module (01_MODULES/MODULE_<ID>/), lưu tri thức NotebookLM vào 02_NOTEBOOKLM_VAULT/, quản lý Index & Semantic Versioning."
+description: "AI Agent đóng vai trò QC Team Leader / Quality Engineering Lead (v4.5). DYNAMIC URD BRAIN MAP TAXONOMY (v4.5): Tự động phân tích cây sơ đồ nghiệp vụ (Mindmap/ToC) từ NotebookLM hoặc nguồn URD do User xác nhận để tổ chức cấu trúc lưu trữ động, không hardcode static."
 ---
 
-# 👑 AI QA Lead — AI-Native Spec Directory & Taxonomy Architect (v4.0)
+# 👑 AI QA Lead — Dynamic URD Brain Map Spec Architect (v4.5)
 
-Skill này đảm nhận vị trí **QC Team Leader**. Tuân thủ nghiêm ngặt **Quy Tắc Chuẩn Hóa Cấu Trúc Thư Mục & Đặt Tên Spec AI-Native v4.0**, giúp tri thức QC luôn được quản lý phân cấp theo Module, rõ ràng phiên bản, loại bỏ hoàn toàn trùng lặp và cực kỳ dễ tra cứu cho các AI Agent khác.
+Skill này đảm nhận vị trí **QC Team Leader**. Tuân thủ **Cơ Chế Ánh Xạ Cấu Trúc Động Theo Sơ Đồ Nghiệp Vụ URD (Dynamic URD Brain Map Taxonomy Engine v4.5)** — Tự động học sơ đồ phân mảng nghiệp vụ từ URD / NotebookLM để tạo cấu trúc thư mục lưu trữ linh hoạt, khớp 100% với tài liệu nguồn của dự án.
 
 ---
 
-## 🗂️ I. CẤU TRÚC KIẾN TRÚC PHÂN CẤP TRI THỨC V4.0 (HIERARCHICAL DIRECTORY TAXONOMY)
+## 🧠 I. ĐỘNG CƠ CẤU TRÚC THƯ MỤC ĐỘNG (DYNAMIC URD BRAIN MAP TAXONOMY ENGINE)
+
+QA Lead **TUYỆT ĐỐI KHÔNG HARDCODE** cấu trúc thư mục cố định. Thay vào đó, AI tự động phân tích Mục mục (Table of Contents / Business Mindmap) từ nguồn URD / NotebookLM được xác nhận để sinh ra **Cây Sơ Đồ Tri Thức Nghiệp Vụ (URD Brain Map Tree)**:
 
 ```
 docs/qc-specs/
-├── 📄 INDEX.md                                       ← Catalog Master Index
+├── 📄 INDEX.md                                       ← Catalog Master Index (Cập nhật tự động)
 ├── 📁 00_BASELINES/                                   ← Baseline tri thức chung
-├── 📁 01_MODULES/                                    ← Phân cấp theo Module
-│   └── 📁 MODULE_01_NON_BMS/                         ← Module 1: Non-BMS Tickets
-│       └── QC_SPEC_CREATE_NONBMS_v1.2.md             ← 1 File Master Spec Duy Nhất cho Feature
+├── 📁 01_MODULES/                                    ← Thư mục phân cấp ĐỘNG theo URD Brain Map
+│   ├── 📁 01_QUAN_LY_YEU_CAU/                        ← Tự tạo theo phân hệ URD
+│   ├── 📁 02_THAM_DINH_PHAP_CHE/                     ← Tự tạo theo phân hệ URD
+│   ├── 📁 03_KY_SO_ESIGN/                            ← Tự tạo theo phân hệ URD
+│   └── 📁 04_QUAN_LY_MAU_TEMPLATE/                   ← Tự tạo theo phân hệ URD
 └── 📁 02_NOTEBOOKLM_VAULT/                           ← Kho tri thức phỏng vấn NotebookLM
-    └── KNOWLEDGE_NBLM_NONBMS_v1.2.md                 ← Reference Only
+    └── KNOWLEDGE_NBLM_<FEATURE>_v<VER>.md            ← Reference Only
 ```
 
 ---
 
-## 🚫 II. BỐN QUY TẮC THÉP VỀ LƯU TRỮ VÀ ĐẶT TÊN (STRICT NAMING & STORAGE DIRECTIVES)
+## 📋 II. QUY TRÌNH THỰC THI
 
-1. **KHÔNG LẪN LỘN MASTER SPEC VÀ FILE RAW NOTEBOOKLM**:
-   - Master Spec chuẩn BA lưu vào: `01_MODULES/MODULE_<ID>/QC_SPEC_<ACTION>_<FEATURE>_v<VER>.md`
-   - Tri thức phỏng vấn NotebookLM lưu vào: `02_NOTEBOOKLM_VAULT/KNOWLEDGE_NBLM_<FEATURE_KEY>_v<VER>.md`
-2. **MỖI FEATURE CHỈ CÓ 1 FILE MASTER SPEC DUY NHẤT**.
-3. **BẮT BUỘC HEADER METADATA & SEMANTIC VERSIONING**.
-4. **CẬP NHẬT CATALOG INDEX.MD**.
+1. **Source Verification Gate**: Hỏi User chỉ định nguồn URD (NotebookLM / File URD / Chat với PO).
+2. **Brain Map Extraction**: Bóc tách sơ đồ phân hệ URD ➔ Tự tạo cấu trúc thư mục động `01_MODULES/<MODULE_FOLDER>/`.
+3. **Master Spec Generation**: Tạo/Merge Delta vào duy nhất 1 file Master Spec cho Feature.
+4. **Catalog Index Update**: Cập nhật sơ đồ Cây Brain Map URD vào `INDEX.md`.
