@@ -1,50 +1,47 @@
 ---
 name: ai-testcase-generator
-description: "Skill chuyên biệt sinh bộ Testcase Markdown từ QC Spec (v2.9). TỰ ĐỘNG ĐỌC VÀ ĐỐI CHIẾU FILE TESTCASE HIỆN TẠI ĐỂ KHAI THÁC NGÓC NGÁCH NGHIỆP VỤ (Deep Penetration Edge Cases), CHỐNG TRÙNG LẶP VÀ CHỐNG XUNG ĐỘT KẾT QUẢ MONG ĐỢI 100%."
+description: "Skill chuyên biệt sinh bộ Testcase Markdown từ QC Spec (v3.0). NẠP TRI THỨC KÉP DUAL KNOWLEDGE (00_QA_LEAD_*_NOTEBOOKLM_KNOWLEDGE.md + 01_QC_SPEC_*.md), ÁP DỤNG MA TRẬN TỔ HỢP 5 CHIỀU (5D COMBINATORIAL MATRIX ENGINE) ĐỂ PHỦ 100% QUY TẮC NGHIỆP VỤ & NGÓC NGÁCH KHÔNG BỎ SÓT."
 ---
 
-# 🧪 AI Testcase Generator — Continuous Deep Expansion & Deduplication Engine (v2.9)
+# 🧪 AI Testcase Generator — Dual Knowledge & 5D Combinatorial Matrix Engine (v3.0)
 
-Skill này bóc tách và mở rộng bộ testcase chuyên sâu từ bản QC Spec. **CAM KẾT ĐỌC TỰ ĐỘNG QC SPEC THEO SESSION, TỰ ĐỘNG ĐỐI CHIẾU DỮ LIỆU ĐÃ CÓ ĐỂ KHAI THÁC MỌI NGÓC NGÁCH NGHIỆP VỤ, CHỐNG TRÙNG LẶP VÀ CHỐNG XUNG ĐỘT KẾT QUẢ MONG ĐỢI 100%.**
+Skill này biến AI Agent thành **Chuyên gia Thiết kế Ma trận Test Case Chuyên sâu (Test Case Architect)**. Tuân thủ **Cơ chế Nạp Tri Thức Kép (Dual Knowledge Ingestion)** và **Ma Trận Tổ Hợp 5 Chiều (5D Combinatorial Matrix)** để bao phủ 100% quy tắc nghiệp vụ, chức năng và ngóc ngách ranh giới.
 
 ---
 
-## 🔍 GIAO THỨC BỔ SUNG NGÓC NGÁCH NGHIỆP VỤ & CHỐNG TRÙNG LẶP (DEEP EXPANSION & DEDUPLICATION PROTOCOL)
+## 🧠 I. CƠ CHẾ AI NẠP SÂU TRI THỨC NGHIỆP VỤ (DUAL KNOWLEDGE INGESTION ENGINE)
 
-Khi được yêu cầu tạo mới hoặc bổ sung testcase cho một Session (`SESSION_ID`), AI Agent **BẮT BUỘC** thực thi 4 bước kiểm soát nghiêm ngặt sau:
+Khi nhận `SESSION_ID`, skill **BẮT BUỘC NẠP 2 NGUỒN TRI THỨC DUAL KNOWLEDGE**:
 
 ```mermaid
 graph TD
-    SPEC["📄 1. Đọc QC Spec của Session:<br/>01_QC_SPEC_*.md"] --> MAP["🗺️ Trích xuất State Machine, Boundary Matrix,<br/>RBAC Matrix, Risk Matrix"]
-    READ_TC["📋 2. Đọc file 02_testcase.md hiện tại"] --> EXIST["Fingerprint Registry:<br/>Lập danh sách các (Payload + Action + Expected) đã có"]
-    MAP & EXIST --> DIFF["🔍 3. So sánh khoảng trống (Gap Analysis):<br/>Tìm các ngóc ngách nghiệp vụ chưa được kiểm thử"]
-    DIFF --> GEN["✍️ 4. Sinh Testcase Mới:<br/>- Khai thác sâu ngóc ngách<br/>- CHỐNG TRÙNG LẶP 100%<br/>- CHỐNG XUNG ĐỘT EXPECTED RESULT 100%"]
+    S1["📘 NGUỒN 1: 00_QA_LEAD_*_NOTEBOOKLM_KNOWLEDGE.md<br/>- Kết quả chưng cất 360° từ URD & DB Schema<br/>- Phỏng vấn Đa Vòng NotebookLM về quy tắc ngầm<br/>- Mã lỗi API, Enums danh mục, Risk Rules"] --> DUAL
+    S2["📄 NGUỒN 2: 01_QC_SPEC_*.md<br/>- State Machine Transitions<br/>- Field Validation & Boundary Limits<br/>- RBAC Matrix (Salesman -> Legal -> Signer)"] --> DUAL
+
+    DUAL["⚡ DUAL KNOWLEDGE INGESTION ENGINE<br/>Nạp 100% Quy tắc Ngầm, Ràng buộc DB & Edge Cases"] --> MATRIX["🎲 5D COMBINATORIAL MATRIX ENGINE"]
 ```
 
 ---
 
-### 1. 📖 Tự Động Đọc Và Nạp Tri Thức QC Spec Theo Session (`01_QC_SPEC_*.md`):
-- AI Agent tự động đọc file `<SESSION_ID>/01_QC_SPEC_*.md`.
-- Nạp State Machine, Field Validation, RBAC Matrix, Risk Matrix.
+## 🎲 II. MA TRẬN TỔ HỢP 5 CHIỀU (5D COMBINATORIAL MATRIX ENGINE)
+
+$$\text{Testcase Matrix} = \text{Role} \times \text{DocType} \times \text{TemplateOption} \times \text{BoundaryLimit} \times \text{FailureInjection}$$
+
+### Chi Tiết 5 Chiều Ma Trận:
+- **Chiều 1 (Roles)**: `Salesman` $\rightarrow$ `Legal Assignor` $\rightarrow$ `Legal Reviewer` $\rightarrow$ `Deputy Signer`.
+- **Chiều 2 (DocTypes)**: `Hợp đồng` $\times$ `Phụ lục (Có HĐ Cha / Không HĐ Cha)` $\times$ `Biên bản / Khác`.
+- **Chiều 3 (Review Methods)**: `Theo Template` (FileEntryId) $\times$ `Không theo Template` (Upload file .docx/.pdf) $\times$ `Nhập mới KH / KH trên CM`.
+- **Chiều 4 (Boundary & Edge Limits)**: Min-1, Max+1, 0, Số âm, Max String 255/1000 char, File Size 99.9MB / 100MB, Timezone UTC vs GMT+7.
+- **Chiều 5 (Failure & Security Injections)**: Timeout E-Sign 30s, BMS service 503 down, Double-click 50ms, IDOR access, JWT tamper.
 
 ---
 
-### 2. 📋 Đọc File Testcase Hiện Tại (`02_testcase.md`) & Lập Fingerprint Registry:
-- Trích xuất danh sách `(Mã TC | Role | Action Input Payload | Expected Result State)` của tất cả testcase đã tồn tại để tránh trùng lặp.
+## 📋 III. GIAO THỨC CHỐNG TRÙNG LẶP & CHỐNG XUNG ĐỘT (DEDUPLICATION PROTOCOL)
+- Lập Fingerprint Registry từ `02_testcase.md`.
+- Zero Duplication 100%.
+- Expected State Harmony 100%.
 
 ---
 
-### 3. 🔍 Khai Thác Sâu Các Ngóc Ngách Nghiệp Vụ Chưa Phủ (Deep Penetration Edge Cases):
-- **Tổ hợp chéo rủi ro cao**: Phụ lục + Docx lỗi font + KH CM ngưng hoạt động + Nhóm dịch vụ không hỗ trợ template + Account bị lock...
-- **Thao tác dị biệt (Adversarial Actions)**: Double click 50ms, IDOR URL modification, Max payload 100MB, Network disconnect...
-
----
-
-### 4. 🛡️ CHỐNG TRÙNG LẶP & CHỐNG XUNG ĐỘT KẾT QUẢ MONG ĐỢI 100%:
-- **Zero Duplication**: Không trùng lặp cặp `(Input Payload + Action Steps)`.
-- **Expected State Harmony**: Tuân thủ 100% State Machine trong QC Spec. Không có xung đột giữa TC mới và TC cũ.
-
----
-
-## 🚫 CẤU TRÚC 100% CHI TIẾT ĐẦY ĐỦ 4 PHẦN (STRICT NO-COMPRESSION v2.9)
-Tất cả các testcase bổ sung **BẮT BUỘC** giữ nguyên độ chi tiết 4 phần như ban đầu (Ưu tiên, Điều kiện/Data payload, Các bước 1..N chi tiết, Expected Result DB/API).
+## 🚫 IV. QUY TẮC 100% CHI TIẾT ĐẦY ĐỦ 4 PHẦN (STRICT NO-COMPRESSION CONTRACT)
+Mọi testcase đầy đủ 4 phần (Ưu tiên, Điều kiện/Data payload, Các bước 1..N chi tiết, Expected Result DB/API).
