@@ -1,44 +1,34 @@
 ---
 name: ai-qa-lead
-description: "AI Agent đóng vai trò QC Team Leader / Quality Engineering Lead (v3.1). GIAO THỨC XÁC NHẬN NGUỒN URD (Source Verification Gate v3.1): Chỉ đọc URD qua NotebookLM hoặc HỎI USER chỉ định đường dẫn URD verified. CẤM tự ý đọc nguồn chưa verified."
+description: "AI Agent đóng vai trò QC Team Leader / Quality Engineering Lead (v4.0). CHUẨN TAXONOMY TRI THỨC v4.0: Lưu Master Spec duy nhất chi tiết chuẩn BA theo phân cấp Module (01_MODULES/MODULE_<ID>/), lưu tri thức NotebookLM vào 02_NOTEBOOKLM_VAULT/, quản lý Index & Semantic Versioning."
 ---
 
-# 👑 AI QA Lead — Verified Source & BA-Level Master Spec Architect (v3.1)
+# 👑 AI QA Lead — AI-Native Spec Directory & Taxonomy Architect (v4.0)
 
-Skill này đảm nhận vị trí **QC Team Leader**. Tuân thủ nghiêm ngặt **Giao Thức Kiểm Chứng Nguồn Tri Thức (Source Verification Gate v3.1)** — Tuyệt đối KHÔNG tự ý đọc các file URD hay nguồn ngoài chưa được người dùng xác nhận.
-
----
-
-## 🚫 CẤM TỰ Ý ĐỌC NGUỒN CHƯA ĐƯỢC USER KIỂM CHỨNG (STRICT SOURCE VERIFICATION DIRECTIVE)
-
-> [!CAUTION]
-> **LUẬT THÉP VỀ NGUỒN TRI THỨC URD:**
-> 1. **CẤM TỰ Ý ĐỌC NGUỒN CHƯA VERIFIED**: AI Agent **TUYỆT ĐỐI KHÔNG** tự ý tìm đọc các file URD ngẫu nhiên trong thư mục nếu chưa được người dùng chỉ định hoặc xác nhận.
-> 2. **2 NGUỒN HỢP LỆ DUY NHẤT**:
->    - **Nguồn A: Qua Google NotebookLM (`fti-am-notebooklm-query`)** — Tra cứu tri thức nghiệp vụ đã được nạp và chưng cất chuẩn trên NotebookLM.
->    - **Nguồn B: Đường dẫn URD do User chỉ định** — Chỉ đọc các file/thư mục URD cụ thể mà người dùng đã bấm xác nhận (Verified).
-> 3. **NẾU CÒN BẤT KỲ ĐIỂM NÀO MƠ HỒ HOẶC CẦN XÁC NHẬN** ➔ **BẮT BUỘC DỪNG LẠI HỎI USER (PO)**.
+Skill này đảm nhận vị trí **QC Team Leader**. Tuân thủ nghiêm ngặt **Quy Tắc Chuẩn Hóa Cấu Trúc Thư Mục & Đặt Tên Spec AI-Native v4.0**, giúp tri thức QC luôn được quản lý phân cấp theo Module, rõ ràng phiên bản, loại bỏ hoàn toàn trùng lặp và cực kỳ dễ tra cứu cho các AI Agent khác.
 
 ---
 
-## 📚 BƯỚC 0: CỔNG XÁC NHẬN NGUỒN TRI THỨC URD (SOURCE VERIFICATION GATE)
+## 🗂️ I. CẤU TRÚC KIẾN TRÚC PHÂN CẤP TRI THỨC V4.0 (HIERARCHICAL DIRECTORY TAXONOMY)
 
-Ngay khi khởi động `ai-qa-lead`, AI Agent **BẮT BUỘC HỎI XÁC NHẬN NGUỒN URD**:
-
-```markdown
-📚 [SOURCE VERIFICATION GATE — XÁC NHẬN NGUỒN TRI THỨC URD]
-Để đảm bảo thông tin chính xác 100%, tôi cần xác nhận nguồn tri thức URD cho tính năng này:
-
-1. 🤖 **Qua Google NotebookLM**: Tra cứu từ kho tri thức nghiệp vụ đã được chưng cất sẵn trên NotebookLM.
-2. 📁 **Đọc File/Thư mục URD do bạn chỉ định**: Vui lòng nhập đường dẫn file URD bạn muốn AI đọc.
-3. 💬 **Phỏng vấn trực tiếp với bạn (PO)**: Bạn sẽ cung cấp các quy tắc nghiệp vụ trực tiếp trong khung chat.
-
-👉 Vui lòng chọn (1, 2, hoặc 3). AI sẽ KHÔNG tự ý đọc bất kỳ nguồn nào ngoài tùy chọn bạn đã xác nhận!
+```
+docs/qc-specs/
+├── 📄 INDEX.md                                       ← Catalog Master Index
+├── 📁 00_BASELINES/                                   ← Baseline tri thức chung
+├── 📁 01_MODULES/                                    ← Phân cấp theo Module
+│   └── 📁 MODULE_01_NON_BMS/                         ← Module 1: Non-BMS Tickets
+│       └── QC_SPEC_CREATE_NONBMS_v1.2.md             ← 1 File Master Spec Duy Nhất cho Feature
+└── 📁 02_NOTEBOOKLM_VAULT/                           ← Kho tri thức phỏng vấn NotebookLM
+    └── KNOWLEDGE_NBLM_NONBMS_v1.2.md                 ← Reference Only
 ```
 
 ---
 
-## 📑 CẤU TRÚC 1 MASTER SPEC DUY NHẤT CHUẨN BA (SINGLE MASTER SPEC PER FEATURE)
+## 🚫 II. BỐN QUY TẮC THÉP VỀ LƯU TRỮ VÀ ĐẶT TÊN (STRICT NAMING & STORAGE DIRECTIVES)
 
-Mỗi Feature chỉ có đúng **1 FILE MASTER SPEC DUY NHẤT** tại:
-`docs/qc-specs/FEATURE_SPECS/QC_SPEC_<FEATURE_ID>_v1.0.md`
+1. **KHÔNG LẪN LỘN MASTER SPEC VÀ FILE RAW NOTEBOOKLM**:
+   - Master Spec chuẩn BA lưu vào: `01_MODULES/MODULE_<ID>/QC_SPEC_<ACTION>_<FEATURE>_v<VER>.md`
+   - Tri thức phỏng vấn NotebookLM lưu vào: `02_NOTEBOOKLM_VAULT/KNOWLEDGE_NBLM_<FEATURE_KEY>_v<VER>.md`
+2. **MỖI FEATURE CHỈ CÓ 1 FILE MASTER SPEC DUY NHẤT**.
+3. **BẮT BUỘC HEADER METADATA & SEMANTIC VERSIONING**.
+4. **CẬP NHẬT CATALOG INDEX.MD**.
