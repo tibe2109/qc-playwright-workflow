@@ -1,69 +1,55 @@
 ---
 name: ai-playwright-spec-builder
-description: "Skill chuyên biệt sinh code Playwright từ Testcase Markdown. Đọc testcase.md + auth configs, sinh 100% mã Playwright Spec (*.spec.ts) và POM classes. Không tự bịa selector/endpoint khi mơ hồ (Zero Hallucination), in Team Progress Dashboard trực quan và hướng dẫn bước tiếp theo cho team."
+description: "Skill chuyên biệt sinh code Playwright từ Testcase Markdown (v2.6). Đọc testcase.md + auth configs, TỰ ĐỘNG CHIA ĐỢT / CHUNKING NẾU TESTCASE QUÁ DÀI (>15 TCs thành nhiều file spec nhỏ), sinh 100% mã Playwright Spec (*.spec.ts) và POM classes chuẩn mực, không cắt ngắn code."
 ---
 
-# 🏗️ AI Playwright Spec Builder — Universal Code Generator (v2.1)
+# 🏗️ AI Playwright Spec Builder — Automatic Spec Chunking & Code Generator (v2.6)
 
-Skill này chuyển thể Testcase Markdown thành mã nguồn Playwright E2E với POM pattern và luồng chuyển đổi vai trò (User Switching). Tập trung duy nhất vào nhiệm vụ sinh code Playwright.
+Skill này chuyển thể danh sách **Testcase Markdown (`02_testcase.md`)** thành mã nguồn Playwright E2E. Đảm bảo **tự động chia đợt (Chunking Mode)** khi file testcase quá dài để 100% testcase đều được sinh code tỉ mỉ, đầy đủ assertions và không bao giờ bị cắt ngắn.
+
+---
+
+## ⚡ CƠ CHẾ CHIA ĐỢT TỰ ĐỘNG (AUTOMATIC CHUNKING & MULTI-SPEC BATCHING)
 
 > [!IMPORTANT]
-> **LUẬT THÉP VẬN HÀNH:**
-> 1. **NHIỆM VỤ ĐƠN LẺ**: Chỉ chuyển thể `02_testcase.md` → Code Playwright. Xong 100% nhiệm vụ thì in Dashboard báo cáo và dừng lại, không làm tràn sang việc của skill khác.
-> 2. **ZERO HALLUCINATION**: Không tự bịa ra selector UI hay API endpoint nếu chưa đối chiếu DOM / POM / Spec. Nếu thiếu thông tin auth hoặc route URL, **BẮT BUỘC DỪNG LẠI HỎI USER KHI MƠ HỒ**.
-> 3. **TEAM PROGRESS DASHBOARD**: Kết thúc bước, **BẮT BUỘC** in bản tin Dashboard trực quan cho toàn team biết: *Đã xong gì? File ở đâu? Bước tiếp theo làm gì?*
+> **QUY TẮC CHIA ĐỢT NẾU FILE TESTCASE QUÁ DÀI:**
+> Kích thước file testcase lớn (30 - 80+ testcases) sẽ tự động được AI chia nhỏ thành các **Batches / Sub-spec Files** để đảm bảo chất lượng code 100% chính xác, không bị đứt đoạn hay viết tắt `// TODO`.
 
----
+```mermaid
+graph TD
+    TC["📋 Input: 02_testcase.md (Ví dụ: 45 Testcases)"] --> CHECK{"Đếm số lượng Testcases N"}
+    CHECK -->|"N <= 15 TCs"| SINGLE["📄 Single Spec File:<br/>03_playwright/CreateOrder.spec.ts"]
+    CHECK -->|"N > 15 TCs"| CHUNK["✂️ Automatic Spec Chunking Mode (15 TCs / File)"]
 
-## 🔄 BƯỚC 0: NHẬN SESSION & CẤU HÌNH
+    CHUNK --> S1["✍️ Batch 1: 01_CreateOrder_HappyPath.spec.ts (TC_1 -> TC_15)"]
+    CHUNK --> S2["✍️ Batch 2: 02_CreateOrder_Negative_Boundary.spec.ts (TC_16 -> TC_30)"]
+    CHUNK --> S3["✍️ Batch 3: 03_CreateOrder_Security_Race.spec.ts (TC_31 -> TC_45)"]
 
-### Nhận SESSION_ID:
-- **Từ Orchestrator**: Dùng SESSION_ID được truyền vào.
-- **Standalone**: Tự sinh `SES_<YYYYMMDD>_<HHmmss>_SPEC_BUILD`.
-
-### Đọc `pipeline.config.json` — CHỈ ĐỌC:
-- Lấy: `paths.e2eRootDir`, `paths.e2ePagesDir`, `paths.e2eFeaturesDir`, `paths.authRolesConfig`
-
----
-
-## 🛠️ QUY TRÌNH THỰC THI 3 BƯỚC
-
-### Bước 1: Đọc Testcase & Xác nhận Cấu hình Auth
-- Đọc file `<SESSION_ID>/02_testcase.md`.
-- Kiểm tra file user config (`users.real.json` / `auth-roles.json`).
-- Nếu thiếu file auth config hoặc chưa rõ Base URL:
-  👉 **DỪNG LẠI HỎI USER XÁC NHẬN TRƯỚC KHU SINH CODE**.
-
-### Bước 2: Sinh Mã Nguồn Playwright (POM + Spec)
-- Sinh Page Object Model class vào `<SESSION_ID>/03_playwright/pages/<FeatureName>Page.ts`.
-- Sinh Playwright Spec file vào `<SESSION_ID>/03_playwright/<FeatureName>.spec.ts`.
-- Copy đồng bộ ra `<paths.e2ePagesDir>` và `<paths.e2eFeaturesDir>`.
-
-### Bước 3: In TEAM PROGRESS DASHBOARD & Hướng dẫn Bước Tiếp Theo
-Cập nhật `SESSION_CONTEXT.json` và **in ngay bản tin Dashboard**:
-
-```markdown
-================================================================================
-📊 BÁO CÁO TIẾN ĐỘ THỰC THI (TEAM PROGRESS DASHBOARD)
-================================================================================
-📌 Session ID      : <SESSION_ID>
-📌 Feature         : <FeatureName>
-📌 Skill vừa chạy  : [ai-playwright-spec-builder] (Bước 3/4)
-📌 Trạng thái bước : ✅ HOÀN THÀNH 100%
---------------------------------------------------------------------------------
-✅ ĐÃ HOÀN THÀNH Ở BƯỚC NÀY:
-   1. Chuyển thể 100% testcase thành code Playwright E2E chuẩn mực.
-   2. Tạo Page Object Model (POM) class cô lập và dễ bảo trì.
-   3. Cấu hình luồng xác thực và chuyển đổi tài khoản (User Switching).
-
-📁 TẢI NGUYÊN & FILE ĐÃ PHÁT SINH:
-   📄 POM File      : <SESSION_ID>/03_playwright/pages/<FeatureName>Page.ts
-   ✍️ Spec File     : <SESSION_ID>/03_playwright/<FeatureName>.spec.ts
-   📂 Target E2E    : <paths.e2eFeaturesDir>/<FEATURE_ID>/<FeatureName>.spec.ts
-
-👉 BƯỚC TIẾP THEO CẦN LÀM:
-   Chạy Bước 4 — Skill [ai-playwright-test-runner] để thực thi test ở REAL Mode.
-   💬 Lệnh kích hoạt tiếp theo:
-   "Hãy chạy skill ai-playwright-test-runner cho session <SESSION_ID>"
-================================================================================
+    SINGLE & S1 & S2 & S3 --> POM["🏗️ Dùng chung 1 POM Class: CreateOrderPage.ts"]
 ```
+
+### Quy tắc sinh file khi Chunking:
+1. **Dùng chung 1 Page Object Model (POM) Class**: Chỉ tạo 1 file `<FeatureName>Page.ts` duy nhất để tái sử dụng toàn bộ locators và action functions.
+2. **Phân chia theo Trụ cột / Nhóm tính năng**:
+   - `01_<FeatureName>_HappyPath.spec.ts` — Bao phủ luồng chính & multi-role (P1).
+   - `02_<FeatureName>_Negative_Boundary.spec.ts` — Bao phủ validation, boundary & malformed inputs (P2, P3).
+   - `03_<FeatureName>_Security_Race.spec.ts` — Bao phủ IDOR, RBAC, Race condition, Integrity (P4, P5, P6, P7, P8).
+3. **Mỗi Testcase sinh đầy đủ 100%**: Đủ Steps to Reproduce, Web-First Assertions (`expect(locator).toBeVisible()`), Data Payload, tuyệt đối **KHÔNG viết tắt `// TODO`**.
+
+---
+
+## 🛠️ QUY TẮC PHÁT SINH MÃ CODE PLAYWRIGHT
+
+### 1. Page Object Model (POM) Class:
+Sinh tại `<SESSION_ID>/03_playwright/pages/<FeatureName>Page.ts`.
+
+### 2. Playwright Spec Files (Batches):
+Sinh các file Spec tại `<SESSION_ID>/03_playwright/specs/`.
+
+---
+
+## 💾 ĐẦU RA (SESSION-SCOPED OUTPUT)
+
+1. `<SESSION_ID>/03_playwright/pages/<FeatureName>Page.ts` — Shared POM Class
+2. `<SESSION_ID>/03_playwright/specs/01_*.spec.ts`, `02_*.spec.ts`... — Spec Batches
+3. Copy đồng bộ ra `<paths.e2eFeaturesDir>/<SESSION_ID>/` để Playwright Test Runner chạy theo từng đợt.
