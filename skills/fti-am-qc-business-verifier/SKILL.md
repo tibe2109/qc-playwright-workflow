@@ -1,33 +1,48 @@
 ---
 name: fti-am-qc-business-verifier
-description: "Skill Chuyên gia Thẩm định & Kiểm chứng Nghiệp vụ ĐA LUỒNG AGENT (v2.0). Khởi tạo Subagents song song qua invoke_subagent thẩm định đối chiếu 1-1 với NotebookLM (30-50+ câu hỏi song song): cắt tỉa 100% quy tắc AI tự bịa/chênh lệch, chuẩn hóa tài liệu đạt [VERIFIED_STRICT_BASELINE]."
+description: "Skill Chuyên gia Thẩm định & Kiểm chứng Nghiệp vụ ĐA LUỒNG AGENT ĐỘNG (v3.0). Phân tích file & đánh giá độ phức tạp để TỰ ĐỘNG PHÂN BỔ ĐỘNG SỐ LƯỢNG SUBAGENTS (Tối thiểu 4 Subagents, tăng lên 5-8+ Subagents nếu phức tạp). Phỏng vấn NotebookLM đối chiếu 1-1 song song, loại bỏ 100% quy tắc AI tự bịa/chênh lệch."
 ---
 
-# 🔍 FTI-AM QC Business Verifier — Concurrent Multi-Agent Verification Engine (v2.0)
+# 🔍 FTI-AM QC Business Verifier — Dynamic Multi-Agent Verification Engine (v3.0)
 
-Skill này chịu trách nhiệm **Thẩm định & Kiểm chứng Nghiệp vụ 100% Không Hallucination Ở Quy Mô Đa Luồng (Concurrent Multi-Agent Verification)**. Skill sử dụng `invoke_subagent` để **khởi chạy 3-4 Subagents chạy song song**, chia nhỏ từng section trong `01b_DEEP_BUSINESS_ANALYSIS.md` để đối chiếu 1-1 với Google NotebookLM (`fti-am-notebooklm-query`) đa vòng đồng thời (tổng cộng 30-50+ câu hỏi thẩm định song song), loại bỏ 100% quy tắc tự bịa.
-
----
-
-## ⚡ I. BỐN SUBAGENTS THẨM ĐỊNH SONG SONG (4 PARALLEL VERIFICATION TRACKS)
-
-1. **Subagent Track A — Workflow & State Transitions Verifier**:
-   - Thẩm định 1-1 các luồng thao tác, ma chuyển đổi trạng thái ticket CTI.CTRTICKET.
-2. **Subagent Track B — Field Validations & Rules Verifier**:
-   - Thẩm định 1-1 từng trường dữ liệu, regex, min/max length, mã số thuế CM.
-3. **Subagent Track C — External Integrations Verifier**:
-   - Thẩm định 1-1 các quy tắc FPT.eSign, BMS binding, FTI-CM lookup.
-4. **Subagent Track D — Edge Cases & Security Verifier**:
-   - Thẩm định 1-1 các kịch bản IDOR, double submit, ranh giới và ngoại lệ.
+Skill này chịu trách nhiệm **Thẩm định & Kiểm chứng Nghiệp vụ 100% Không Hallucination Ở Quy Mô Đa Luồng Động (Dynamic Context-Aware Verification)**. Master Agent ban đầu đọc file `01b_DEEP_BUSINESS_ANALYSIS.md`, phân tích khối lượng quy tắc và **TỰ ĐỘNG PHÂN BỔ ĐỘNG SỐ LƯỢNG SUBAGENTS (Tối thiểu 4 Subagents, tự động tăng lên 5, 6, 8+ Subagents nếu file chứa nhiều section/quy tắc phức tạp)**, khởi chạy song song qua `invoke_subagent` đối chiếu 1-1 với Google NotebookLM (`fti-am-notebooklm-query`) loại bỏ 100% quy tắc tự bịa.
 
 ---
 
-## 📑 II. QUY TRÌNH THỰC THI ĐA LUỒNG
+## 🚀 I. ĐỘNG CƠ PHÂN BỔ SUBAGENTS THẨM ĐỊNH ĐỘNG
 
-1. **Master Agent trích xuất Rules**: Đọc `01b_DEEP_BUSINESS_ANALYSIS.md` và phân chia danh mục rules.
-2. **Dispatch 4 Subagents song song**: Gọi `invoke_subagent` giao 4 tracks cho 4 Subagents.
-3. **Subagents đối chiếu NotebookLM song song**: Mỗi Subagent chạy 5-8 rounds thẩm định 1-1 với NotebookLM (`fti-am-notebooklm-query`).
+> [!IMPORTANT]
+> **PHÂN BỔ ĐỘNG THEO KHỐI LƯỢNG RULES TRONG FILE:**
+> Master Agent bóc tách danh sách các Section & Quy tắc trong file `01b_DEEP_BUSINESS_ANALYSIS.md`. Dựa vào số lượng section và mức độ phức tạp, AI tự phân bổ:
+> - **Tối thiểu**: **4 Subagents song song** cho các file đặc tả tiêu chuẩn.
+> - **Mở rộng**: **5, 6, 8+ Subagents song song** nếu file chứa hàng trăm quy tắc phức tạp ở nhiều mảng khác nhau.
+
+```mermaid
+graph TD
+    AUDIT["🔍 Step 1: Đọc & Bóc Tách Rules Trong File 01b_DEEP_BUSINESS_ANALYSIS.md"] --> SCHEDULER["⚡ DYNAMIC VERIFICATION SCHEDULER<br/>Tự động phân bổ N Subagents (Min = 4, Max = 8+)"]
+
+    SCHEDULER --> SUB1["🤖 Subagent 1: Thẩm định Section Track 1 (NotebookLM 1-1)"]
+    SCHEDULER --> SUB2["🤖 Subagent 2: Thẩm định Section Track 2 (NotebookLM 1-1)"]
+    SCHEDULER --> SUB3["🤖 Subagent 3: Thẩm định Section Track 3 (NotebookLM 1-1)"]
+    SCHEDULER --> SUB4["🤖 Subagent 4: Thẩm định Section Track 4 (NotebookLM 1-1)"]
+    SCHEDULER --> SUB5["🤖 Subagent N...: Thẩm định Section Track N... (NotebookLM 1-1)"]
+
+    SUB1 --> MERGE["💾 Master Agent Lọc Cắt Tỉa & Flush Cập Nhật Thời Gian Thực"]
+    SUB2 --> MERGE
+    SUB3 --> MERGE
+    SUB4 --> MERGE
+    SUB5 --> MERGE
+    MERGE --> OUT["📂 am-docs/QC_SESSIONS/<SESSION_ID>/01b_DEEP_BUSINESS_ANALYSIS.md<br/>Status: [VERIFIED_STRICT_BASELINE_DYNAMIC]"]
+```
+
+---
+
+## ⚡ II. QUY TRÌNH THỰC THI ĐA LUỒNG ĐỘNG
+
+1. **Master Agent đọc & phân tích file `01b_DEEP_BUSINESS_ANALYSIS.md`**: Trích xuất toàn bộ danh mục rules.
+2. **Quyết định số lượng Subagents (Min 4, Max 8+)**: Phân chia danh mục rules cho N Subagents song song.
+3. **Dispatch Subagents qua `invoke_subagent`**: Khởi chạy đồng thời N Subagents phỏng vấn đối chiếu 1-1 với NotebookLM (`fti-am-notebooklm-query`).
 4. **Lọc cắt tỉa & tổng hợp**:
-   - **Xác nhận CÓ**: Giữ lại rule `[✅ VERIFIED]`.
-   - **Xác nhận KHÔNG CÓ (tự bịa)**: Xóa 100% `[❌ SANITIZED_HALLUCINATION]`.
-5. **Master Agent Cập nhật thời gian thực vào `01b_DEEP_BUSINESS_ANALYSIS.md`**.
+   - **NotebookLM xác nhận CÓ**: Giữ lại rule `[✅ VERIFIED]`.
+   - **NotebookLM xác nhận KHÔNG CÓ (tự bịa)**: Xóa 100% `[❌ SANITIZED_HALLUCINATION]`.
+5. **Master Agent Cập nhật thời gian thực vào file `01b_DEEP_BUSINESS_ANALYSIS.md`**.
